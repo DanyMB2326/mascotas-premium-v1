@@ -1,0 +1,94 @@
+.checkout-page { display: flex; flex-direction: column; gap: 2rem; }
+
+/* Steps progress */
+.checkout-steps { display: flex; align-items: center; gap: 0; margin-bottom: 0.5rem; }
+.checkout-step { display: flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); transition: color var(--transition); }
+.checkout-step.active { color: var(--text-primary); }
+.checkout-step.done { color: var(--accent); }
+.step-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; flex-shrink: 0; transition: all var(--transition); }
+.checkout-step.active .step-circle, .checkout-step.done .step-circle { background: var(--accent); border-color: var(--accent); color: #fff; }
+.step-line { flex: 1; height: 2px; background: var(--border); margin: 0 0.75rem; max-width: 80px; }
+
+/* Layout */
+.checkout-layout { display: grid; grid-template-columns: 1fr 340px; gap: 2rem; align-items: start; }
+.checkout-form-wrap { display: flex; flex-direction: column; gap: 1.5rem; }
+.checkout-actions { display: flex; gap: 1rem; align-items: center; }
+.checkout-actions .citas-submit { flex: 1; }
+
+/* Métodos de pago */
+.metodos-grid { display: flex; flex-direction: column; gap: 0.6rem; }
+.metodo-card {
+  display: flex; align-items: center; padding: 1rem 1.25rem;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  cursor: pointer; transition: all var(--transition); background: var(--bg);
+}
+.metodo-card:hover { border-color: var(--accent); }
+.metodo-card.selected { border-color: var(--accent); background: var(--accent-dim); }
+.metodo-label { font-weight: 700; font-size: 0.9rem; }
+.metodo-desc { font-size: 0.78rem; color: var(--text-secondary); font-weight: 500; margin-top: 0.15rem; }
+
+/* Card visual */
+.card-visual {
+  background: linear-gradient(135deg, var(--nav-bg) 0%, #2d4226 100%);
+  border-radius: 12px; padding: 1.5rem; color: #fff; margin-bottom: 1rem;
+  min-height: 140px; display: flex; flex-direction: column; justify-content: space-between;
+}
+.card-chip { font-size: 1.2rem; opacity: 0.8; letter-spacing: 2px; }
+.card-number-display { font-family: monospace; font-size: 1.1rem; letter-spacing: 0.15em; opacity: 0.9; }
+.card-bottom { display: flex; justify-content: space-between; font-size: 0.8rem; opacity: 0.75; font-weight: 600; }
+
+/* Summary panel */
+.checkout-summary-panel {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.75rem;
+  display: flex; flex-direction: column; gap: 1rem;
+  position: sticky; top: calc(var(--nav-height) + 2rem);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+.summary-panel-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; }
+
+.summary-items { display: flex; flex-direction: column; gap: 0.75rem; }
+.summary-item { display: flex; align-items: center; gap: 0.75rem; }
+.summary-item-img { width: 48px; height: 48px; object-fit: cover; border-radius: var(--radius-sm); flex-shrink: 0; background: var(--bg-elevated); }
+.summary-item-info { flex: 1; min-width: 0; }
+.summary-item-name { font-size: 0.82rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.summary-item-qty { font-size: 0.75rem; color: var(--text-secondary); font-weight: 500; }
+.summary-item-price { font-size: 0.85rem; font-weight: 700; flex-shrink: 0; }
+
+.summary-divider { height: 1px; background: var(--border); }
+.summary-calc { display: flex; flex-direction: column; gap: 0.5rem; }
+.summary-line-row { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; }
+.envio-gratis { color: var(--accent); font-weight: 800; }
+.envio-hint { font-size: 0.75rem; color: var(--text-secondary); font-weight: 500; }
+
+.summary-total-row { display: flex; justify-content: space-between; align-items: center; font-weight: 800; }
+.summary-total-value { font-family: var(--font-serif); font-size: 1.3rem; color: var(--accent); }
+
+.summary-seguridad { font-size: 0.75rem; color: var(--text-secondary); text-align: center; font-weight: 500; padding: 0.5rem; background: var(--bg-elevated); border-radius: var(--radius-sm); }
+
+/* Order success */
+.order-success { display: flex; flex-direction: column; gap: 1.5rem; max-width: 580px; animation: fadeIn 0.5s ease both; }
+.order-success .success-icon { font-size: 2.5rem; }
+.order-success h1 { font-family: var(--font-serif); font-size: 2rem; font-weight: 700; }
+.order-success p { color: var(--text-secondary); font-size: 0.95rem; font-weight: 500; line-height: 1.6; }
+
+.order-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.order-detail-card { background: var(--bg-elevated); border-radius: var(--radius-sm); padding: 1rem; }
+.order-detail-card h4 { font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+.order-detail-card p { font-size: 0.9rem; font-weight: 600; }
+.order-code { font-family: monospace; font-size: 0.78rem; color: var(--accent); word-break: break-all; display: block; margin-top: 0.25rem; }
+
+.pago-instrucciones { margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
+.pago-instrucciones p { font-size: 0.82rem; }
+.oxxo-ref { font-family: monospace; font-size: 0.85rem; letter-spacing: 0.05em; color: var(--orange); display: block; margin: 0.4rem 0; }
+.pago-nota { font-size: 0.75rem; color: var(--text-secondary); }
+
+.order-total-box { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; background: var(--accent-dim); border: 1px solid var(--border-accent); border-radius: var(--radius-sm); font-weight: 700; }
+.order-total-value { font-family: var(--font-serif); font-size: 1.4rem; color: var(--accent); }
+
+@media (max-width: 900px) {
+  .checkout-layout { grid-template-columns: 1fr; }
+  .checkout-summary-panel { position: static; }
+  .form-row { grid-template-columns: 1fr; }
+  .order-detail-grid { grid-template-columns: 1fr; }
+}

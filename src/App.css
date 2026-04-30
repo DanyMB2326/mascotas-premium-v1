@@ -1,0 +1,195 @@
+/* Importé una fuente de Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #fffdf7;
+}
+
+/* --- Efectos para el NavBar --- */
+.navbar-custom {
+  background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%); 
+  border-bottom: 4px solid #CE1126; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.nav-link-magic {
+  color: #ffffff !important;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+/* Efecto de subrayado al pasar el mouse */
+.nav-link-magic::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 3px;
+  display: block;
+  margin-top: 5px;
+  right: 0;
+  background: #F9D616;
+  transition: width 0.3s ease;
+  -webkit-transition: width 0.3s ease;
+}
+
+.nav-link-magic:hover {
+  color: #F9D616 !important;
+}
+
+.nav-link-magic:hover::after {
+  width: 100%;
+  left: 0;
+  background: #F9D616;
+}
+
+/* Logo */
+.brand-magic span:first-child {
+    text-shadow: 2px 2px 4px rgba(249, 214, 22, 0.3);
+}
+
+
+/* Efectos para el Carritoc*/
+.cart-widget-container {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+.cart-widget-container:hover {
+    transform: scale(1.15);
+}
+
+
+/* Efectos para el Container */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-card-magic {
+    background: radial-gradient(circle at top left, #ffffff, #f8f9fa);
+    border: none;
+    border-top: 6px solid #CE1126; 
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    animation: fadeUp 0.8s ease-out forwards;
+}
+
+/* Botón*/
+.btn-magic-red {
+    background-color: #CE1126;
+    border: none;
+    padding: 12px 30px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(206, 17, 38, 0.4);
+    transition: all 0.3s ease;
+}
+
+.btn-magic-red:hover {
+    background-color: #a80c1d;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(206, 17, 38, 0.6);
+}
+
+/* =====================
+   CARD INTERACTIVA
+===================== */
+
+.item-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.item-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* =====================
+   IMAGEN CON ZOOM
+===================== */
+
+.img-container {
+  overflow: hidden;
+}
+
+.item-img {
+  height: 220px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.item-card:hover .item-img {
+  transform: scale(1.1);
+}
+
+/* =====================
+   BOTÓN MÁGICO ✨
+===================== */
+
+.btn-magic {
+  transition: all 0.3s ease;
+}
+
+.item-card:hover .btn-magic {
+  background-color: #b02a37; /* rojo más oscuro */
+  box-shadow: 0 0 15px rgba(220, 53, 69, 0.7);
+  transform: scale(1.05);
+}
+
+/* =====================
+   FOOTER
+===================== */
+
+.footer {
+  background-color: #111;
+  color: #eee;
+  padding: 2.5rem 0 2rem;
+  margin-top: 4rem;
+  border-top: 1px solid #222;
+}
+
+.footer-min {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.footer-title {
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #dc3545;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 1.2rem;
+  font-size: 1.4rem;
+}
+
+.footer-socials svg {
+  cursor: pointer;
+  color: #aaa;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.footer-socials svg:hover {
+  transform: scale(1.15);
+  color: #dc3545;
+}
+
+.footer-copy {
+  font-size: 0.8rem;
+  color: #777;
+}
+

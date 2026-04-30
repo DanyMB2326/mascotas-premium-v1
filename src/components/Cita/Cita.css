@@ -1,0 +1,90 @@
+.citas-page { display: flex; flex-direction: column; gap: 2rem; }
+
+.citas-layout { display: grid; grid-template-columns: 1fr 320px; gap: 2rem; align-items: start; }
+
+/* Form */
+.citas-form { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.form-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  display: flex; flex-direction: column; gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.form-section-title { font-family: var(--font-serif); font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.45rem; }
+.form-group label { font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; }
+.input-error { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(192,57,43,0.1) !important; }
+.field-error { font-size: 0.78rem; color: var(--danger); font-weight: 600; }
+
+/* Servicios */
+.servicios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
+
+.servicio-card {
+  display: flex; flex-direction: column; gap: 0.3rem;
+  padding: 1rem; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: all var(--transition);
+  background: var(--bg);
+}
+.servicio-card:hover { border-color: var(--accent); }
+.servicio-card.selected { border-color: var(--accent); background: var(--accent-dim); }
+.servicio-nombre { font-weight: 700; font-size: 0.9rem; }
+.servicio-duracion { font-size: 0.78rem; color: var(--text-secondary); font-weight: 500; }
+.servicio-precio { font-weight: 800; color: var(--accent); font-size: 0.9rem; margin-top: 0.25rem; }
+
+/* Horarios */
+.horarios-grid { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.horario-btn {
+  padding: 0.5rem 1rem; border-radius: 999px;
+  border: 1.5px solid var(--border); cursor: pointer;
+  font-size: 0.85rem; font-weight: 600;
+  transition: all var(--transition); background: var(--bg);
+}
+.horario-btn:hover { border-color: var(--accent); color: var(--accent); }
+.horario-btn.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.citas-submit { padding: 1rem; font-size: 1rem; }
+
+/* Sidebar */
+.citas-sidebar { display: flex; flex-direction: column; gap: 1rem; position: sticky; top: calc(var(--nav-height) + 2rem); }
+
+.sidebar-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.sidebar-card h4 { font-family: var(--font-serif); font-weight: 700; font-size: 1rem; margin-bottom: 1rem; }
+
+.sidebar-steps { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+.sidebar-steps li { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; line-height: 1.4; }
+.step-num { display: flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; background: var(--accent); color: #fff; border-radius: 50%; font-size: 0.72rem; font-weight: 800; flex-shrink: 0; }
+
+.resumen .resumen-line { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.85rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+.resumen .resumen-line:last-child { border-bottom: none; }
+.resumen-precio { font-weight: 800; color: var(--accent); }
+
+.info-card p { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; line-height: 1.6; }
+.sidebar-phone { color: var(--accent) !important; font-weight: 700 !important; margin-top: 0.5rem; }
+
+/* Success */
+.cita-success { display: flex; flex-direction: column; gap: 1.5rem; max-width: 540px; animation: fadeIn 0.5s ease both; }
+.cita-success .success-icon { width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: var(--accent-dim); border: 2px solid var(--border-accent); border-radius: 50%; color: var(--accent); font-size: 1.6rem; font-weight: 700; animation: pop 0.4s ease both; }
+.cita-success h1 { font-family: var(--font-serif); font-size: 2rem; font-weight: 700; }
+.cita-success p { color: var(--text-secondary); font-size: 0.95rem; font-weight: 500; line-height: 1.6; }
+.cita-id-box { display: flex; flex-direction: column; gap: 0.4rem; }
+.cita-id-label { font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; }
+.cita-id-code { font-family: monospace; font-size: 0.85rem; background: var(--bg-elevated); border: 1.5px solid var(--border-accent); border-radius: var(--radius-sm); padding: 0.6rem 1rem; color: var(--accent); word-break: break-all; }
+.success-note { font-size: 0.85rem; }
+
+@media (max-width: 900px) {
+  .citas-layout { grid-template-columns: 1fr; }
+  .citas-sidebar { position: static; }
+  .form-row { grid-template-columns: 1fr; }
+}

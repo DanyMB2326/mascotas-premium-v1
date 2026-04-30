@@ -1,0 +1,57 @@
+.hero-banner {
+  position: relative;
+  background: linear-gradient(135deg, #1e2b1a 0%, #2d4226 60%, #3a5530 100%);
+  border-radius: var(--radius);
+  padding: 4rem 3rem 3rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.hero-content { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 1.25rem; max-width: 580px; }
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.hero-title em { font-style: italic; color: var(--gold); }
+
+.hero-sub { font-size: 1rem; color: rgba(240,237,232,0.75); max-width: 460px; line-height: 1.7; font-weight: 500; }
+
+.hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
+.hero-cta { background: var(--orange); }
+.hero-cta:hover { background: #e0832f; box-shadow: 0 4px 20px rgba(212,115,42,0.4); }
+.hero-cta-sec { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.85); }
+.hero-cta-sec:hover { border-color: var(--gold); color: var(--gold); }
+
+/* Stats bar */
+.hero-stats {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; gap: 2rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.stat { display: flex; flex-direction: column; gap: 0.2rem; }
+.stat-num { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; color: var(--gold); }
+.stat-label { font-size: 0.78rem; color: rgba(240,237,232,0.55); font-weight: 600; }
+.stat-divider { width: 1px; height: 36px; background: rgba(255,255,255,0.12); }
+
+/* Decorations */
+.hero-deco { position: absolute; inset: 0; pointer-events: none; }
+.deco-circle {
+  position: absolute; border-radius: 50%;
+  background: rgba(255,255,255,0.03);
+}
+.deco-1 { width: 400px; height: 400px; top: -100px; right: -100px; }
+.deco-2 { width: 200px; height: 200px; bottom: -50px; right: 200px; }
+.deco-paw { position: absolute; bottom: 2rem; right: 3rem; font-size: 8rem; opacity: 0.06; }
+
+@media (max-width: 768px) {
+  .hero-banner { padding: 2.5rem 1.5rem 2rem; }
+  .hero-stats { gap: 1.25rem; flex-wrap: wrap; }
+  .deco-paw { font-size: 5rem; }
+}

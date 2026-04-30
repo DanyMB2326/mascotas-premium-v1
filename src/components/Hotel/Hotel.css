@@ -1,0 +1,36 @@
+.hotel-page { display: flex; flex-direction: column; gap: 2rem; }
+
+.suites-grid { display: flex; flex-direction: column; gap: 1rem; }
+
+.suite-card {
+  display: flex; flex-direction: column; gap: 0.75rem;
+  padding: 1.25rem; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  cursor: pointer; transition: all var(--transition); background: var(--bg);
+}
+.suite-card:hover { border-color: var(--accent); }
+.suite-card.selected { border-color: var(--accent); background: var(--accent-dim); }
+
+.suite-header { display: flex; align-items: center; gap: 0.85rem; }
+.suite-emoji { font-size: 1.8rem; flex-shrink: 0; }
+.suite-nombre { font-weight: 700; font-size: 1rem; }
+.suite-capacidad { font-size: 0.78rem; color: var(--text-secondary); font-weight: 500; }
+.suite-precio { margin-left: auto; font-weight: 800; font-size: 1rem; color: var(--accent); white-space: nowrap; }
+.suite-precio span { font-size: 0.75rem; font-weight: 500; color: var(--text-secondary); }
+.suite-desc { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; line-height: 1.5; }
+.suite-incluye { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; }
+.suite-incluye li { font-size: 0.78rem; color: var(--accent); font-weight: 600; }
+
+.noches-resumen {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.85rem 1rem; background: var(--accent-dim);
+  border-radius: var(--radius-sm); border: 1px solid var(--border-accent);
+  font-size: 0.9rem; font-weight: 600;
+}
+.noches-total { font-weight: 800; color: var(--accent); font-size: 1rem; }
+
+.total-line { font-weight: 800 !important; font-size: 1rem !important; padding-top: 0.75rem !important; border-top: 1.5px solid var(--border) !important; border-bottom: none !important; }
+.pago-nota { font-size: 0.78rem; color: var(--text-secondary); font-weight: 500; margin-top: 0.25rem; }
+
+.reserva-total-box { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--accent-dim); border-radius: var(--radius-sm); border: 1px solid var(--border-accent); }
+.reserva-total { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; color: var(--accent); }
