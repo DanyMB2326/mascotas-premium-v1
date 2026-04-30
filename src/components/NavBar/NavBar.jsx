@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import CartWidget from '../CartWidget/CartWidget';
 import './NavBar.css';
 
 const CATEGORIES = [
-  { id: 'nutricion', label: '🥩 Nutrición' },
-  { id: 'bienestar', label: '💊 Bienestar' },
-  { id: 'accesorios', label: '🎀 Accesorios' },
+  { id: 'nutricion',   label: '🥩 Nutrición' },
+  { id: 'bienestar',   label: '💊 Bienestar' },
+  { id: 'accesorios',  label: '🎀 Accesorios' },
   { id: 'suscripcion', label: '📦 Caja Manada' },
 ];
 
@@ -16,45 +16,65 @@ const SERVICIOS = [
 ];
 
 const NavBar = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen,       setMenuOpen]       = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
+  const [servicesOpen,   setServicesOpen]   = useState(false);
+
+  const catRef = useRef(null);
+  const svcRef = useRef(null);
+
+  /* Close dropdowns when clicking outside */
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (catRef.current && !catRef.current.contains(e.target)) {
+        setCategoriesOpen(false);
+      }
+      if (svcRef.current && !svcRef.current.contains(e.target)) {
+        setServicesOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  /* Close mobile menu on route change */
+  const closeAll = () => {
+    setMenuOpen(false);
+    setCategoriesOpen(false);
+    setServicesOpen(false);
+  };
 
   return (
     <header className="navbar">
       <div className="navbar-inner container">
 
         {/* LOGO */}
-        <Link to="/" className="navbar-logo" onClick={() => setMenuOpen(false)}>
+        <Link to="/" className="navbar-logo" onClick={closeAll}>
           <span className="logo-paw">🐾</span>
           <span className="logo-name">Manada</span>
         </Link>
 
         {/* NAV */}
         <nav className="navbar-nav">
-
           <NavLink
             to="/"
             end
-            className={({ isActive }) =>
-              isActive ? 'nav-link active' : 'nav-link'
-            }
+            className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+            onClick={closeAll}
           >
             Inicio
           </NavLink>
 
           {/* CATEGORÍAS */}
-          <div
-            className="services-dropdown"
-            onMouseEnter={() => setCategoriesOpen(true)}
-            /*onMouseLeave={() => setCategoriesOpen(false)}*/
-          >
+          <div className="services-dropdown" ref={catRef}>
             <button
               className="nav-link dropdown-btn"
               onClick={() => {
-                setCategoriesOpen(!categoriesOpen);
+                setCategoriesOpen((v) => !v);
                 setServicesOpen(false);
               }}
+              aria-expanded={categoriesOpen}
             >
               Categorías ▾
             </button>
@@ -66,7 +86,7 @@ const NavBar = () => {
                     key={cat.id}
                     to={`/category/${cat.id}`}
                     className="dropdown-item"
-                    onClick={() => setCategoriesOpen(false)}
+                    onClick={closeAll}
                   >
                     {cat.label}
                   </NavLink>
@@ -76,17 +96,14 @@ const NavBar = () => {
           </div>
 
           {/* SERVICIOS */}
-          <div
-            className="services-dropdown"
-            onMouseEnter={() => setServicesOpen(true)}
-            onMouseLeave={() => setServicesOpen(false)}
-          >
+          <div className="services-dropdown" ref={svcRef}>
             <button
               className="nav-link dropdown-btn"
               onClick={() => {
-                setServicesOpen(!servicesOpen);
+                setServicesOpen((v) => !v);
                 setCategoriesOpen(false);
               }}
+              aria-expanded={servicesOpen}
             >
               Servicios ▾
             </button>
@@ -98,7 +115,7 @@ const NavBar = () => {
                     key={s.path}
                     to={s.path}
                     className="dropdown-item"
-                    onClick={() => setServicesOpen(false)}
+                    onClick={closeAll}
                   >
                     {s.label}
                   </NavLink>
@@ -109,27 +126,23 @@ const NavBar = () => {
 
           <NavLink
             to="/login"
-            className={({ isActive }) =>
-              isActive ? 'nav-link nav-login active' : 'nav-link nav-login'
-            }
+            className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+            onClick={closeAll}
           >
             Iniciar Sesión
           </NavLink>
 
           <NavLink
             to="/register"
-            className={({ isActive }) =>
-              isActive ? 'nav-link nav-register active' : 'nav-link nav-register'
-            }
+            className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+            onClick={closeAll}
           >
             Registrarse
           </NavLink>
-
         </nav>
 
-        {/* DERECHA (SOLO UNA) */}
+        {/* DERECHA */}
         <div className="navbar-right">
-
           <CartWidget />
 
           <button
@@ -143,66 +156,41 @@ const NavBar = () => {
             <span className={`ham-line ${menuOpen ? 'open' : ''}`} />
           </button>
         </div>
-
       </div>
 
       {/* MOBILE */}
-<div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+      <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+        <NavLink to="/" className="mobile-link" onClick={closeAll}>Inicio</NavLink>
 
-  <NavLink
-    to="/"
-    className="mobile-link"
-    onClick={() => setMenuOpen(false)}
-  >
-    Inicio
-  </NavLink>
+        {CATEGORIES.map((cat) => (
+          <NavLink
+            key={cat.id}
+            to={`/category/${cat.id}`}
+            className="mobile-link"
+            onClick={closeAll}
+          >
+            {cat.label}
+          </NavLink>
+        ))}
 
-  {CATEGORIES.map((cat) => (
-    <NavLink
-      key={cat.id}
-      to={`/category/${cat.id}`}
-      className="mobile-link"
-      onClick={() => setMenuOpen(false)}
-    >
-      {cat.label}
-    </NavLink>
-  ))}
+        <div className="mobile-divider" />
 
-  <div className="mobile-divider" />
+        {SERVICIOS.map((s) => (
+          <NavLink
+            key={s.path}
+            to={s.path}
+            className="mobile-link mobile-link-service"
+            onClick={closeAll}
+          >
+            {s.label}
+          </NavLink>
+        ))}
 
-  {SERVICIOS.map((s) => (
-    <NavLink
-      key={s.path}
-      to={s.path}
-      className="mobile-link mobile-link-service"
-      onClick={() => setMenuOpen(false)}
-    >
-      {s.label}
-    </NavLink>
-  ))}
+        <div className="mobile-divider" />
 
-  <div className="mobile-divider" />
-
-  {/* LOGIN / REGISTER (CORREGIDO) */}
-  <NavLink
-    to="/login"
-    className="mobile-link"
-    onClick={() => setMenuOpen(false)}
-  >
-    👤 Iniciar Sesión
-  </NavLink>
-
-  <NavLink
-    to="/register"
-    className="mobile-link"
-    onClick={() => setMenuOpen(false)}
-  >
-    ✍️ Registrarse
-  </NavLink>
-
-</div>
-
-    
+        <NavLink to="/login"    className="mobile-link" onClick={closeAll}>👤 Iniciar Sesión</NavLink>
+        <NavLink to="/register" className="mobile-link" onClick={closeAll}>✍️ Registrarse</NavLink>
+      </div>
     </header>
   );
 };
