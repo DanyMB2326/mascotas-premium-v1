@@ -1,48 +1,32 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import CartWidget from '../CartWidget/CartWidget';
 import { useAuth } from '../../context/AuthContext';
+import { SERVICES } from '../../data/services';
 import { toast } from 'react-toastify';
+import Logo from '../Logo/Logo';
 import './NavBar.css';
-
-const CATEGORIES = [
-  { id: 'nutricion',   label: '🥩 Nutrición' },
-  { id: 'bienestar',   label: '💊 Bienestar' },
-  { id: 'accesorios',  label: '🎀 Accesorios' },
-  { id: 'suscripcion', label: '📦 Caja Manada' },
-];
-
-const SERVICIOS = [
-  { path: '/citas', label: '📅 Agendar Cita' },
-  { path: '/hotel', label: '🏨 Hotel Manada' },
-];
-
 const NavBar = () => {
-  const { user, logout }             = useAuth();
-  const [menuOpen,       setMenuOpen]       = useState(false);
-  const [categoriesOpen, setCategoriesOpen] = useState(false);
-  const [servicesOpen,   setServicesOpen]   = useState(false);
-  const [userMenuOpen,   setUserMenuOpen]   = useState(false);
+  const { user, logout } = useAuth();
+  const [menuOpen,     setMenuOpen]     = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  const catRef  = useRef(null);
   const svcRef  = useRef(null);
   const userRef = useRef(null);
   const navigate = useNavigate();
 
-  /* Close dropdowns on outside click */
   useEffect(() => {
     const handler = (e) => {
-      if (catRef.current  && !catRef.current.contains(e.target))  setCategoriesOpen(false);
       if (svcRef.current  && !svcRef.current.contains(e.target))  setServicesOpen(false);
       if (userRef.current && !userRef.current.contains(e.target)) setUserMenuOpen(false);
     };
+
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const closeAll = () => {
     setMenuOpen(false);
-    setCategoriesOpen(false);
     setServicesOpen(false);
     setUserMenuOpen(false);
   };
@@ -54,78 +38,69 @@ const NavBar = () => {
     navigate('/');
   };
 
-  /* Short display name */
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'Mi cuenta';
 
   return (
     <header className="navbar">
       <div className="navbar-inner container">
 
-        {/* LOGO */}
         <Link to="/" className="navbar-logo" onClick={closeAll}>
-          <span className="logo-paw">🐾</span>
-          <span className="logo-name">Manada</span>
+          <Logo size={36} />
+          <span className="logo-text">
+            <span className="logo-name">Paw Loyal</span>
+            <span className="logo-sub">Clínica Boutique Animal</span>
+          </span>
         </Link>
 
-        {/* NAV */}
         <nav className="navbar-nav">
           <NavLink to="/" end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={closeAll}>
             Inicio
           </NavLink>
 
-          {/* CATEGORÍAS */}
-          <div className="services-dropdown" ref={catRef}>
+          {/* SERVICIOS DROPDOWN */}
+          <div className="nav-dropdown" ref={svcRef}>
             <button
-              className="nav-link dropdown-btn"
-              onClick={() => { setCategoriesOpen(v => !v); setServicesOpen(false); setUserMenuOpen(false); }}
-              aria-expanded={categoriesOpen}
-            >
-              Categorías ▾
-            </button>
-            {categoriesOpen && (
-              <div className="dropdown-menu">
-                {CATEGORIES.map(cat => (
-                  <NavLink key={cat.id} to={`/category/${cat.id}`} className="dropdown-item" onClick={closeAll}>
-                    {cat.label}
-                  </NavLink>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* SERVICIOS */}
-          <div className="services-dropdown" ref={svcRef}>
-            <button
-              className="nav-link dropdown-btn"
-              onClick={() => { setServicesOpen(v => !v); setCategoriesOpen(false); setUserMenuOpen(false); }}
+              type="button"
+              className="nav-link nav-link-btn"
+              onClick={() => { setServicesOpen((v) => !v); setUserMenuOpen(false); }}
               aria-expanded={servicesOpen}
             >
               Servicios ▾
             </button>
             {servicesOpen && (
-              <div className="dropdown-menu">
-                {SERVICIOS.map(s => (
-                  <NavLink key={s.path} to={s.path} className="dropdown-item" onClick={closeAll}>
-                    {s.label}
+              <div className="dropdown-menu dropdown-services">
+                {SERVICES.map((s) => (
+                  <NavLink key={s.id} to={`/servicios/${s.id}`} className="dropdown-item" onClick={closeAll}>
+                    <span className="dropdown-emoji">{s.emoji}</span>
+                    <span>{s.nombre}</span>
                   </NavLink>
                 ))}
+                <hr className="dropdown-divider" />
+                <NavLink to="/servicios" className="dropdown-item dropdown-item--all" onClick={closeAll}>
+                  Ver todos →
+                </NavLink>
               </div>
             )}
           </div>
 
-          {/* USER: logged in */}
+          <NavLink to="/reservar" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={closeAll}>
+            Reservar
+          </NavLink>
+
           {user ? (
-            <div className="services-dropdown" ref={userRef}>
+            <div className="nav-dropdown" ref={userRef}>
               <button
-                className="nav-link dropdown-btn nav-user-btn"
-                onClick={() => { setUserMenuOpen(v => !v); setCategoriesOpen(false); setServicesOpen(false); }}
+                type="button"
+                className="nav-link nav-link-btn nav-user-btn"
+                onClick={() => { setUserMenuOpen((v) => !v); setServicesOpen(false); }} 
                 aria-expanded={userMenuOpen}
               >
                 👤 {displayName} ▾
               </button>
               {userMenuOpen && (
                 <div className="dropdown-menu">
-                  <NavLink to="/mis-mascotas" className="dropdown-item" onClick={closeAll}>🐾 Mis Mascotas</NavLink>
+                  <NavLink to="/mis-mascotas" className="dropdown-item" onClick={closeAll}>🐾 Mis mascotas</NavLink>
+                  <NavLink to="/reservar"     className="dropdown-item" onClick={closeAll}>📅 Reservar</NavLink>
                   <hr className="dropdown-divider" />
                   <button className="dropdown-item dropdown-item--danger" onClick={handleLogout}>
                     🚪 Cerrar sesión
@@ -134,54 +109,52 @@ const NavBar = () => {
               )}
             </div>
           ) : (
-            /* USER: not logged in */
+
             <>
-              <NavLink to="/login"    className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={closeAll}>Iniciar Sesión</NavLink>
-              <NavLink to="/register" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={closeAll}>Registrarse</NavLink>
+              <NavLink to="/login"    className="nav-link" onClick={closeAll}>Iniciar sesión</NavLink>
+              <NavLink to="/register" className="nav-cta"  onClick={closeAll}>Crear cuenta</NavLink>
             </>
           )}
         </nav>
 
-        {/* RIGHT */}
-        <div className="navbar-right">
-          <CartWidget />
-          <button className="hamburger" onClick={() => setMenuOpen(o => !o)} aria-label="Menú" aria-expanded={menuOpen}>
-            <span className={`ham-line ${menuOpen ? 'open' : ''}`} />
-            <span className={`ham-line ${menuOpen ? 'open' : ''}`} />
-            <span className={`ham-line ${menuOpen ? 'open' : ''}`} />
-          </button>
-        </div>
+        <button
+          className="hamburger"
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-label="Menú"
+          aria-expanded={menuOpen}
+        >
+          <span className={`ham-line ${menuOpen ? 'open' : ''}`} />
+          <span className={`ham-line ${menuOpen ? 'open' : ''}`} />
+          <span className={`ham-line ${menuOpen ? 'open' : ''}`} />
+        </button>
       </div>
 
-      {/* MOBILE */}
+      {/* MOBILE MENU*/}
       <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
-        <NavLink to="/" className="mobile-link" onClick={closeAll}>Inicio</NavLink>
-
-        {CATEGORIES.map(cat => (
-          <NavLink key={cat.id} to={`/category/${cat.id}`} className="mobile-link" onClick={closeAll}>
-            {cat.label}
+        <NavLink to="/"          className="mobile-link" onClick={closeAll}>Inicio</NavLink>
+        <NavLink to="/servicios" className="mobile-link" onClick={closeAll}>Todos los servicios</NavLink>
+         <div className="mobile-section">Servicios</div>
+        {SERVICES.map((s) => (
+          <NavLink key={s.id} to={`/servicios/${s.id}`} className="mobile-link mobile-link-svc" onClick={closeAll}>
+            {s.emoji} {s.nombre}
           </NavLink>
         ))}
 
         <div className="mobile-divider" />
 
-        {SERVICIOS.map(s => (
-          <NavLink key={s.path} to={s.path} className="mobile-link mobile-link-service" onClick={closeAll}>
-            {s.label}
-          </NavLink>
-        ))}
+        <NavLink to="/reservar" className="mobile-link mobile-link-cta" onClick={closeAll}>📅 Reservar</NavLink>
 
         <div className="mobile-divider" />
 
         {user ? (
           <>
-            <NavLink to="/mis-mascotas" className="mobile-link" onClick={closeAll}>🐾 Mis Mascotas</NavLink>
+            <NavLink to="/mis-mascotas" className="mobile-link" onClick={closeAll}>🐾 Mis mascotas</NavLink>
             <button className="mobile-link mobile-link-danger" onClick={handleLogout}>🚪 Cerrar sesión</button>
           </>
         ) : (
           <>
-            <NavLink to="/login"    className="mobile-link" onClick={closeAll}>👤 Iniciar Sesión</NavLink>
-            <NavLink to="/register" className="mobile-link" onClick={closeAll}>✍️ Registrarse</NavLink>
+            <NavLink to="/login"    className="mobile-link" onClick={closeAll}>👤 Iniciar sesión</NavLink>
+            <NavLink to="/register" className="mobile-link mobile-link-cta" onClick={closeAll}>✍️ Crear cuenta</NavLink>
           </>
         )}
       </div>

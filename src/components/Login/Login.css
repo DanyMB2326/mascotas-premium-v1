@@ -25,21 +25,25 @@
 }
 
 .login-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
   text-align: center;
-  font-family: var(--font-serif);
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--accent);
-  letter-spacing: 0.02em;
+  margin-bottom: 0.25rem;
 }
+
+.login-brand-text { display: flex; flex-direction: column; line-height: 1.05; align-items: flex-start; }
+.login-brand-text strong { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; color: var(--brown); }
+.login-brand-text em { font-style: normal; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-secondary); }
 
 .login-title {
   text-align: center;
   font-family: var(--font-serif);
   font-size: 1.85rem;
   font-weight: 700;
-  color: var(--text-primary);
-  margin-top: -0.5rem;
+  color: var(--brown);
+  margin-top: -0.25rem;
 }
 
 .login-subtitle {

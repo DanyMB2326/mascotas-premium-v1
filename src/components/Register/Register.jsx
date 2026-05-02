@@ -4,6 +4,7 @@ import { auth, db } from '../../firebase/config';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Logo from '../Logo/Logo';
 import './Register.css';
 
 const Register = () => {
@@ -45,8 +46,8 @@ const Register = () => {
         createdAt: serverTimestamp(),
       });
 
-      toast.success('¡Cuenta creada! Bienvenido a la manada 🐾');
-      navigate('/');
+      toast.success('¡Cuenta creada! Cargá los datos de tu mascota 🐾');
+      navigate('/mis-mascotas');
     } catch (err) {
       const msg = {
         'auth/email-already-in-use': 'Ese email ya está registrado.',
@@ -63,10 +64,15 @@ const Register = () => {
   return (
     <div className="register-page">
       <div className="register-card">
-        <p className="register-brand">🐾 Manada</p>
+        <div className="register-brand">
+          <Logo size={48} />
+          <span className="register-brand-text">
+            <strong>Paw Loyal</strong>
+            <em>Clínica Boutique Animal</em>
+          </span>
+        </div>
         <h2 className="register-title">Crear Cuenta</h2>
-        <p className="register-subtitle">Unite a la manada y accedé a beneficios exclusivos.</p>
-
+        <p className="register-subtitle">Registra las mascotas de tu familia y reserva en segundos.</p>
         <form className="register-form" onSubmit={handleRegister} noValidate>
 
           <div className="register-group">

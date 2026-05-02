@@ -3,6 +3,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase/config';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Logo from '../Logo/Logo';
 import './Login.css';
 
 const Login = () => {
@@ -22,7 +23,7 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
       toast.success('¡Bienvenido de vuelta! 🐾');
-      navigate('/');
+      navigate('/mis-mascotas');
     } catch (err) {
       const msg = {
         'auth/user-not-found':     'No existe una cuenta con ese email.',
@@ -41,9 +42,15 @@ const Login = () => {
   return (
     <div className="login-page">
       <div className="login-card">
-        <p className="login-brand">🐾 Manada</p>
+        <div className="login-brand">
+          <Logo size={48} />
+          <span className="login-brand-text">
+            <strong>Paw Loyal</strong>
+            <em>Clínica Boutique Animal</em>
+          </span>
+        </div>
         <h2 className="login-title">Iniciar Sesión</h2>
-        <p className="login-subtitle">Accedé para gestionar tus compras y mascotas.</p>
+        <p className="login-subtitle">Accede para gestionar tus mascotas y reservas.</p>
 
         <form className="login-form" onSubmit={handleSubmit} noValidate>
           <div className="login-group">

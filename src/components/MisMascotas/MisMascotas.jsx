@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -50,7 +51,11 @@ const MisMascotas = () => {
   const savePets = async (updatedList) => {
     setSaving(true);
     try {
-      await updateDoc(doc(db, 'users', user.uid), { mascotas: updatedList });
+      await setDoc(
+        doc(db, 'users', user.uid),
+        { uid: user.uid, email: user.email || null, mascotas: updatedList },
+        { merge: true },
+      );
       setMascotas(updatedList);
     } catch {
       toast.error('Error al guardar. Intentá de nuevo.');
@@ -110,8 +115,9 @@ const MisMascotas = () => {
   return (
     <section className="mascotas-page">
       <div className="section-header">
+        <span className="tag">Tu perfil 🐾</span>
         <h1>Mis Mascotas</h1>
-        <p>Guardá los datos de tus mascotas para agilizar citas, hotel y compras.</p>
+        <p>Carga los datos de tus mascotas una vez y reusalos en cada reserva.</p>
       </div>
 
       {/* ── Pet cards ── */}
@@ -138,6 +144,9 @@ const MisMascotas = () => {
                 )}
               </div>
               <div className="mascota-actions">
+                <Link to="/reservar" className="btn-primary mascota-btn">
+                  📅 Reservar
+                </Link>
                 <button className="btn-outline mascota-btn" onClick={() => openEditForm(i)}>
                   ✏️ Editar
                 </button>
@@ -154,7 +163,7 @@ const MisMascotas = () => {
         <div className="state-container">
           <span className="state-icon">🐾</span>
           <h2>Todavía no agregaste mascotas</h2>
-          <p>Guardá sus datos una vez y usálos en citas, hotel y más.</p>
+          <p>Guarda sus datos una vez y usálos en citas, hotel y más.</p>
         </div>
       )}
 

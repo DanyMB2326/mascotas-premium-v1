@@ -1,0 +1,95 @@
+.servicios-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-top: 1.5rem;
+}
+
+.servicios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.servicio-row {
+  display: grid;
+  grid-template-columns: 88px 1fr auto;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1.75rem;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+.servicio-row:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(31, 58, 95, 0.08);
+}
+
+.servicio-row-icon {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--border-accent);
+}
+.servicio-row--gold .servicio-row-icon { background: var(--gold-dim); border-color: rgba(244, 196, 48, 0.3); }
+.servicio-row--navy .servicio-row-icon { background: var(--navy-dim); border-color: rgba(31, 58, 95, 0.2); }
+.servicio-row-icon .emoji { font-size: 2.4rem; line-height: 1; }
+
+.servicio-row-body {
+  display: flex; flex-direction: column; gap: 0.5rem;
+  min-width: 0;
+}
+.servicio-row-body h2 {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--brown);
+}
+.servicio-row-body p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.servicio-row-bullets {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.servicio-row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+.meta-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-dark);
+  background: var(--accent-dim);
+  border-radius: 999px;
+  padding: 0.3em 0.85em;
+}
+
+.servicio-row-actions {
+  display: flex; flex-direction: column; gap: 0.5rem; align-self: stretch; justify-content: center;
+}
+.servicio-row-actions .btn-primary,
+.servicio-row-actions .btn-outline { padding: 0.6rem 1.2rem; font-size: 0.85rem; white-space: nowrap; }
+
+@media (max-width: 800px) {
+  .servicio-row { grid-template-columns: 64px 1fr; gap: 1rem; padding: 1.25rem; }
+  .servicio-row-icon { width: 64px; height: 64px; }
+  .servicio-row-icon .emoji { font-size: 1.8rem; }
+  .servicio-row-actions { grid-column: 1 / -1; flex-direction: row; }
+  .servicio-row-actions .btn-primary,
+  .servicio-row-actions .btn-outline { flex: 1; }
+}
