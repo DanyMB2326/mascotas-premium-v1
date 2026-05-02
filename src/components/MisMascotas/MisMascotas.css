@@ -1,0 +1,154 @@
+.mascotas-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ── Grid ── */
+.mascotas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+/* ── Card ── */
+.mascota-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  transition: box-shadow var(--transition), border-color var(--transition);
+  animation: fadeIn 0.3s ease both;
+}
+
+.mascota-card:hover {
+  box-shadow: 0 8px 28px rgba(74,103,65,0.12);
+  border-color: var(--border-accent);
+}
+
+.mascota-avatar {
+  font-size: 3rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--accent-dim);
+  border-radius: 50%;
+  border: 2px solid var(--border-accent);
+}
+
+.mascota-info { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
+
+.mascota-nombre {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mascota-meta {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.mascota-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2em 0.7em;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.mascota-tag--warning {
+  background: rgba(212,115,42,0.12);
+  color: var(--orange);
+  border: 1px solid rgba(212,115,42,0.25);
+}
+
+.mascota-tag--info {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid var(--border-accent);
+}
+
+.mascota-notas {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.mascota-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: auto;
+}
+
+.mascota-btn {
+  font-size: 0.82rem;
+  padding: 0.45rem 1rem;
+  flex: 1;
+}
+
+.mascota-btn-delete {
+  padding: 0.45rem 0.7rem;
+  font-size: 1rem;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+}
+
+.mascota-btn-delete:hover {
+  background: rgba(192,57,43,0.1);
+  color: var(--danger);
+}
+
+/* ── Add button ── */
+.mascotas-add-btn {
+  align-self: flex-start;
+}
+
+/* ── Form ── */
+.mascota-form-wrap {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-accent);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(74,103,65,0.1);
+  animation: fadeIn 0.3s ease both;
+}
+
+.mascota-form-title {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.mascota-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mascota-form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .mascotas-grid { grid-template-columns: 1fr; }
+  .mascota-form-actions { flex-direction: column-reverse; }
+  .mascota-form-actions button { width: 100%; justify-content: center; }
+}

@@ -1,19 +1,21 @@
 import { useState } from 'react';
-import './Register.css';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../../firebase/config';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import './Register.css';
 
 const Register = () => {
-  const [nombre, setNombre] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [nombre,          setNombre]          = useState('');
+  const [email,           setEmail]           = useState('');
+  const [password,        setPassword]        = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [showPass,        setShowPass]        = useState(false);
+  const [loading,         setLoading]         = useState(false);
   const navigate = useNavigate();
+
+  const passwordsMatch = confirmPassword === '' || password === confirmPassword;
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -22,12 +24,10 @@ const Register = () => {
       toast.error('Completá todos los campos.');
       return;
     }
-
     if (password !== confirmPassword) {
       toast.error('Las contraseñas no coinciden.');
       return;
     }
-
     if (password.length < 6) {
       toast.error('La contraseña debe tener al menos 6 caracteres.');
       return;
@@ -35,25 +35,26 @@ const Register = () => {
 
     setLoading(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      const { user } = await createUserWithEmailAndPassword(auth, email.trim(), password);
 
       await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        nombre,
-        email,
-        createdAt: new Date().toISOString(),
+        uid:       user.uid,
+        nombre:    nombre.trim(),
+        email:     email.trim(),
+        mascotas:  [],
+        createdAt: serverTimestamp(),
       });
 
       toast.success('¡Cuenta creada! Bienvenido a la manada 🐾');
       navigate('/');
-    } catch (error) {
-      const messages = {
+    } catch (err) {
+      const msg = {
         'auth/email-already-in-use': 'Ese email ya está registrado.',
         'auth/invalid-email':        'El formato del email no es válido.',
-        'auth/weak-password':        'La contraseña es muy débil. Usá al menos 6 caracteres.',
+        'auth/weak-password':        'La contraseña es muy débil (mínimo 6 caracteres).',
+        'auth/network-request-failed': 'Sin conexión. Verificá tu internet.',
       };
-      toast.error(messages[error.code] || 'Error al registrarse. Intentá de nuevo.');
+      toast.error(msg[err.code] || `Error: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -64,11 +65,10 @@ const Register = () => {
       <div className="register-card">
         <p className="register-brand">🐾 Manada</p>
         <h2 className="register-title">Crear Cuenta</h2>
-        <p className="register-subtitle">
-          Unite a la manada y accedé a beneficios exclusivos.
-        </p>
+        <p className="register-subtitle">Unite a la manada y accedé a beneficios exclusivos.</p>
 
         <form className="register-form" onSubmit={handleRegister} noValidate>
+
           <div className="register-group">
             <label className="register-label" htmlFor="reg-nombre">Nombre completo</label>
             <input
@@ -96,12 +96,12 @@ const Register = () => {
           </div>
 
           <div className="register-group">
-            <label className="register-label" htmlFor="reg-password">Contraseña</label>
+            <label className="register-label" htmlFor="reg-pass">Contraseña</label>
             <div className="register-input-wrap">
               <input
-                id="reg-password"
+                id="reg-pass"
                 className="register-input"
-                type={showPassword ? 'text' : 'password'}
+                type={showPass ? 'text' : 'password'}
                 placeholder="Mínimo 6 caracteres"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -110,10 +110,10 @@ const Register = () => {
               <button
                 type="button"
                 className="register-eye"
-                onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                onClick={() => setShowPass(v => !v)}
+                aria-label="Mostrar/ocultar contraseña"
               >
-                {showPassword ? '🙈' : '👁️'}
+                {showPass ? '🙈' : '👁️'}
               </button>
             </div>
           </div>
@@ -122,18 +122,14 @@ const Register = () => {
             <label className="register-label" htmlFor="reg-confirm">Confirmar contraseña</label>
             <input
               id="reg-confirm"
-              className={`register-input ${
-                confirmPassword && confirmPassword !== password
-                  ? 'register-input--error'
-                  : ''
-              }`}
-              type={showPassword ? 'text' : 'password'}
+              className={`register-input ${!passwordsMatch ? 'register-input--error' : ''}`}
+              type={showPass ? 'text' : 'password'}
               placeholder="Repetí tu contraseña"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               autoComplete="new-password"
             />
-            {confirmPassword && confirmPassword !== password && (
+            {!passwordsMatch && (
               <span className="register-field-error">Las contraseñas no coinciden</span>
             )}
           </div>
@@ -145,10 +141,7 @@ const Register = () => {
 
         <p className="register-extra">
           ¿Ya tenés cuenta?{' '}
-          <Link to="/login" className="register-link">
-            Iniciá sesión
-          </Link>
-          .
+          <Link to="/login" className="register-link">Iniciá sesión</Link>.
         </p>
       </div>
     </div>

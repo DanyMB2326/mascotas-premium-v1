@@ -1,38 +1,38 @@
 import { useState } from 'react';
-import './Login.css';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase/config';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import './Login.css';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail]           = useState('');
+  const [password, setPassword]     = useState('');
+  const [showPass, setShowPass]     = useState(false);
+  const [loading, setLoading]       = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email.trim() || !password.trim()) {
+    if (!email.trim() || !password) {
       toast.error('Completá todos los campos.');
       return;
     }
-
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email.trim(), password);
       toast.success('¡Bienvenido de vuelta! 🐾');
       navigate('/');
-    } catch (error) {
-      const messages = {
-        'auth/user-not-found':     'No encontramos una cuenta con ese email.',
-        'auth/wrong-password':     'Contraseña incorrecta. Verificá tus datos.',
-        'auth/invalid-email':      'El formato del email no es válido.',
-        'auth/too-many-requests':  'Demasiados intentos. Esperá unos minutos.',
+    } catch (err) {
+      const msg = {
+        'auth/user-not-found':     'No existe una cuenta con ese email.',
+        'auth/wrong-password':     'Contraseña incorrecta.',
+        'auth/invalid-email':      'El email no tiene un formato válido.',
         'auth/invalid-credential': 'Email o contraseña incorrectos.',
+        'auth/too-many-requests':  'Demasiados intentos. Esperá unos minutos.',
+        'auth/network-request-failed': 'Sin conexión. Verificá tu internet.',
       };
-      toast.error(messages[error.code] || 'Error al iniciar sesión. Intentá de nuevo.');
+      toast.error(msg[err.code] || `Error: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -43,9 +43,7 @@ const Login = () => {
       <div className="login-card">
         <p className="login-brand">🐾 Manada</p>
         <h2 className="login-title">Iniciar Sesión</h2>
-        <p className="login-subtitle">
-          Accedé para gestionar tus compras y reservas.
-        </p>
+        <p className="login-subtitle">Accedé para gestionar tus compras y mascotas.</p>
 
         <form className="login-form" onSubmit={handleSubmit} noValidate>
           <div className="login-group">
@@ -67,7 +65,7 @@ const Login = () => {
               <input
                 id="login-password"
                 className="login-input"
-                type={showPassword ? 'text' : 'password'}
+                type={showPass ? 'text' : 'password'}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -76,10 +74,10 @@ const Login = () => {
               <button
                 type="button"
                 className="login-eye"
-                onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                onClick={() => setShowPass(v => !v)}
+                aria-label="Mostrar/ocultar contraseña"
               >
-                {showPassword ? '🙈' : '👁️'}
+                {showPass ? '🙈' : '👁️'}
               </button>
             </div>
           </div>
@@ -91,10 +89,7 @@ const Login = () => {
 
         <p className="login-extra">
           ¿No tenés cuenta?{' '}
-          <Link to="/register" className="login-link">
-            Registrate
-          </Link>
-          .
+          <Link to="/register" className="login-link">Registrate</Link>.
         </p>
       </div>
     </div>

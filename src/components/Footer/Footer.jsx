@@ -5,7 +5,7 @@ const Footer = () => (
   <footer className="footer">
     <div className="footer-inner container">
       <div className="footer-brand">
-        <p className="footer-logo">🐾 <span className="footer-logo-name">Manada</span></p>
+        <p className="footer-logo">🐾 <span className="footer-logo-name">Paw Loyal</span></p>
         <p className="footer-tagline">Tu manada, nuestra misión.</p>
         <p className="footer-desc">
           Productos premium para perros y gatos. Nutrición artesanal, bienestar integral y la caja de suscripción que más espera tu mascota.
