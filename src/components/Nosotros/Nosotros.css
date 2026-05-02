@@ -1,0 +1,299 @@
+.nosotros-page {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+  animation: fadeIn 0.4s ease both;
+}
+
+/* ── Hero ── */
+.nosotros-hero {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 3rem;
+  align-items: center;
+  min-height: 420px;
+}
+
+.nosotros-hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.nosotros-hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.08;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+.nosotros-hero-title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.nosotros-hero-sub {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  max-width: 520px;
+  font-weight: 500;
+}
+
+.nosotros-hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.nosotros-btn-outline {
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+/* Hero visual */
+.nosotros-hero-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 340px;
+}
+
+.hero-visual-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid var(--accent-dim);
+}
+.ring-1 { width: 280px; height: 280px; animation: heroFloat 6s ease-in-out infinite; }
+.ring-2 { width: 200px; height: 200px; animation: heroFloat 8s ease-in-out 1s infinite reverse; }
+
+.hero-visual-icon {
+  font-size: 5rem;
+  z-index: 2;
+  animation: heroFloat 5s ease-in-out infinite;
+  filter: drop-shadow(0 8px 24px rgba(42,157,143,0.25));
+}
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-14px); }
+}
+
+/* ── Stats ── */
+.nosotros-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  background: var(--nav-bg);
+  border-radius: var(--radius);
+  padding: 2.5rem 3rem;
+}
+
+.nosotros-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.nosotros-stat-num {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.nosotros-stat-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(240, 237, 232, 0.55);
+  letter-spacing: 0.02em;
+}
+
+/* ── Misión / Visión ── */
+.mv-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.mv-card {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 2.25rem;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: 0 2px 12px rgba(26, 39, 68, 0.06);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.mv-card:hover {
+  box-shadow: 0 12px 36px rgba(42, 157, 143, 0.12);
+  transform: translateY(-4px);
+}
+
+.mv-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-dim);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-accent);
+}
+
+.mv-vision .mv-icon {
+  background: var(--gold-dim);
+  border-color: rgba(201, 163, 44, 0.3);
+}
+
+.mv-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.mv-body h2 {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mv-body p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-weight: 500;
+}
+
+.mv-body em { font-style: italic; color: var(--accent); font-weight: 600; }
+
+/* ── Valores ── */
+.valores-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.valores-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.valor-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 2px 8px rgba(26,39,68,0.05);
+  transition: box-shadow var(--transition), border-color var(--transition), transform var(--transition);
+  animation: fadeIn 0.4s ease both;
+}
+.valor-card:hover {
+  border-color: var(--border-accent);
+  box-shadow: 0 10px 30px rgba(42, 157, 143, 0.12);
+  transform: translateY(-4px);
+}
+
+.valor-emoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.valor-titulo {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.valor-desc {
+  font-size: 0.87rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+/* ── CTA strip ── */
+.nosotros-cta-strip {
+  background: linear-gradient(135deg, #1a2744 0%, #243660 60%, #1a3a5c 100%);
+  border-radius: var(--radius);
+  padding: 3rem 3.5rem;
+}
+
+.nosotros-cta-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.nosotros-cta-content h2 {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.4rem;
+}
+
+.nosotros-cta-content p {
+  font-size: 0.95rem;
+  color: rgba(240,237,232,0.65);
+  font-weight: 500;
+}
+
+.nosotros-cta-btns {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.nosotros-btn-outline-dark {
+  border-color: rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.85);
+}
+.nosotros-btn-outline-dark:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(42,157,143,0.1);
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .nosotros-stats { grid-template-columns: repeat(2, 1fr); }
+  .valores-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .nosotros-hero { grid-template-columns: 1fr; }
+  .nosotros-hero-visual { height: 200px; }
+  .ring-1 { width: 180px; height: 180px; }
+  .ring-2 { width: 130px; height: 130px; }
+  .hero-visual-icon { font-size: 3.5rem; }
+  .mv-section { grid-template-columns: 1fr; }
+  .nosotros-stats { grid-template-columns: repeat(2, 1fr); padding: 2rem 1.5rem; }
+  .nosotros-cta-strip { padding: 2rem 1.5rem; }
+  .nosotros-cta-content { flex-direction: column; text-align: center; }
+}
+
+@media (max-width: 540px) {
+  .valores-grid { grid-template-columns: 1fr; }
+  .nosotros-stats { grid-template-columns: 1fr 1fr; }
+  .mv-card { flex-direction: column; }
+}
