@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
 import { SERVICES } from '../../data/services';
 import { toast } from 'react-toastify';
 import Logo from '../Logo/Logo';
-import './NavBar.css';
+import '../NavBar/NavBar.css';
 
 const NavBar = () => {
   const { user, logout } = useAuth();
+  const { totalQuantity } = useCart();
   const [menuOpen,     setMenuOpen]     = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -94,9 +96,21 @@ const NavBar = () => {
             )}
           </div>
 
+          <NavLink to="/tienda" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={closeAll}>
+            Tienda
+          </NavLink>
+
           <NavLink to="/reservar" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={closeAll}>
             Reservar
           </NavLink>
+
+          {/* Cart icon */}
+          <Link to="/cart" className="nav-cart" onClick={closeAll} aria-label="Carrito">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+            </svg>
+            {totalQuantity > 0 && <span className="nav-cart-badge">{totalQuantity > 99 ? '99+' : totalQuantity}</span>}
+          </Link>
 
           {user ? (
             <div className="nav-dropdown" ref={userRef}>
@@ -143,6 +157,7 @@ const NavBar = () => {
       <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
         <NavLink to="/"          className="mobile-link" onClick={closeAll}>Inicio</NavLink>
         <NavLink to="/nosotros"  className="mobile-link" onClick={closeAll}>🐾 Nosotros</NavLink>
+        <NavLink to="/tienda"    className="mobile-link" onClick={closeAll}>🛍️ Tienda</NavLink>
         <NavLink to="/servicios" className="mobile-link" onClick={closeAll}>Todos los servicios</NavLink>
         <div className="mobile-section">Servicios</div>
         {SERVICES.map((s) => (

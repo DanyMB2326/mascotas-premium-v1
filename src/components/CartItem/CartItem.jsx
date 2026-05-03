@@ -1,28 +1,30 @@
 import { useCart } from '../../context/CartContext';
-import './CartItem.css';
+import '../CartItem/CartItem.css';
 
-const CartItem = ({ id, title, price, image, quantity }) => {
+const CartItem = ({ id, title, price, image, emoji, quantity }) => {
   const { removeItem } = useCart();
 
   return (
     <div className="cart-item">
       <div className="ci-image-wrap">
-        <img src={image} alt={title} className="ci-image" />
+        {image
+          ? <img src={image} alt={title} className="ci-image" />
+          : <span className="ci-emoji">{emoji || '🐾'}</span>
+        }
       </div>
 
       <div className="ci-info">
         <p className="ci-title">{title}</p>
-        <p className="ci-unit-price">${price.toLocaleString('es-MX')} MX c/u</p>
+        <p className="ci-unit-price">${price.toLocaleString('es-MX')} MXN c/u</p>
       </div>
 
       <div className="ci-right">
         <span className="ci-qty">× {quantity}</span>
-        <span className="ci-subtotal">${(price * quantity).toLocaleString('es-MX')} MX</span>
+        <span className="ci-subtotal">${(price * quantity).toLocaleString('es-MX')} MXN</span>
         <button
           className="btn-ghost ci-remove"
           onClick={() => removeItem(id)}
           aria-label={`Eliminar ${title}`}
-          title="Eliminar"
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="3 6 5 6 21 6" />

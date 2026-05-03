@@ -56,6 +56,27 @@
 .nav-link-btn             { background: none; border: none; cursor: pointer; font: inherit; }
 .nav-user-btn             { max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
 
+/* Cart icon */
+.nav-cart {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  color: var(--text-secondary);
+  margin-left: 0.25rem;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+.nav-cart:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.nav-cart-badge {
+  position: absolute; top: -5px; right: -5px;
+  min-width: 18px; height: 18px;
+  background: var(--gold); color: var(--navy);
+  border-radius: 999px; font-size: 0.6rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 3px;
+}
+
 .nav-cta {
   padding: 0.52rem 1.2rem;
   font-size: 0.875rem;

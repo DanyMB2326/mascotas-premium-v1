@@ -1,4 +1,5 @@
-import './Proveedores.css';
+import { Link } from 'react-router-dom';
+import '../Proveedores/Proveedores.css';
 
 const MARCAS = [
   {
@@ -41,12 +42,15 @@ const Proveedores = () => (
       <div className="proveedores-header">
         <div>
           <span className="tag">🤝 Nuestros aliados</span>
-          <h2>Marcas y productos que recomendamos</h2>
+          <h2>Marcas y productos que vendemos</h2>
           <p>
-            Trabajamos con las mejores marcas del mercado para garantizar que tu mascota
-            reciba nutrición, juego y descanso de primera calidad.
+            Distribuimos directamente los productos de las mejores marcas del mercado.
+            Compra en línea y recíbelos en tu domicilio en CDMX.
           </p>
         </div>
+        <Link to="/tienda" className="btn-primary proveedores-cta">
+          🛍️ Ver tienda completa →
+        </Link>
       </div>
 
       {/* Marcas partners */}
@@ -74,10 +78,13 @@ const Proveedores = () => (
         ))}
       </div>
 
-      <p className="proveedores-nota">
-        ¿Tienes preferencia de marca para la alimentación de tu mascota durante la pensión o guardería?
-        Indícanoslo al reservar. También puedes traer su alimento habitual. 🐾
-      </p>
+      <div className="proveedores-actions">
+        <p className="proveedores-nota">
+          ¿Tienes preferencia de marca para la alimentación de tu mascota durante la pensión o guardería?
+          Indícanoslo al reservar. También puedes traer su alimento habitual. 🐾
+        </p>
+        <Link to="/tienda" className="btn-outline">Ver catálogo completo →</Link>
+      </div>
 
     </div>
   </section>

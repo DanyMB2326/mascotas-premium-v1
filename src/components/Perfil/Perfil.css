@@ -1,0 +1,71 @@
+.perfil-page { display:flex;flex-direction:column;gap:2.5rem;padding-top:2rem;padding-bottom:3rem;animation:fadeIn .35s ease both }
+.pf-hero { display:flex;align-items:center;gap:1.5rem;padding-bottom:2rem;border-bottom:1px solid var(--border);flex-wrap:wrap }
+.pf-avatar { width:64px;height:64px;flex-shrink:0;background:var(--accent);color:#fff;border-radius:50%;font-family:var(--font-serif);font-size:1.8rem;font-weight:700;display:flex;align-items:center;justify-content:center }
+.pf-name  { font-family:var(--font-serif);font-size:1.6rem;font-weight:700;color:var(--brown) }
+.pf-email { font-size:.875rem;color:var(--text-muted);margin-top:.2rem }
+.pf-pets-link { margin-left:auto;flex-shrink:0 }
+.pf-layout { display:flex;flex-direction:column;gap:2rem }
+.pf-section { background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.75rem;display:flex;flex-direction:column;gap:1.25rem }
+.pf-section-header { display:flex;align-items:center;justify-content:space-between;padding-bottom:1rem;border-bottom:1px solid var(--border) }
+.pf-section-header h2 { font-family:var(--font-serif);font-size:1.15rem;font-weight:700;color:var(--brown) }
+.pf-edit-btn { font-size:.8rem;font-weight:700;color:var(--accent);background:var(--teal-dim);border:1px solid var(--border-accent);border-radius:999px;padding:.3rem .85rem;font-family:inherit;transition:background var(--transition) }
+.pf-edit-btn:hover { background:rgba(44,138,138,.2) }
+.pf-info-grid { display:grid;grid-template-columns:1fr 1fr;gap:1.25rem }
+.pf-info-item { display:flex;flex-direction:column;gap:.2rem }
+.pf-info-lbl  { font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted) }
+.pf-info-val  { font-size:.925rem;color:var(--text-primary);font-weight:500 }
+.pf-empty     { color:var(--text-muted);font-style:italic;font-size:.875rem }
+.pf-form-card { background:var(--cream-warm);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1.5rem;display:flex;flex-direction:column;gap:1rem }
+.pf-grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:1rem }
+.pf-form-actions { display:flex;align-items:center;gap:.75rem;margin-top:.25rem }
+.pf-field { display:flex;flex-direction:column;gap:.3rem }
+.pf-field--err input,.pf-field--err select { border-color:var(--danger)!important }
+.pf-label { font-size:.75rem;font-weight:700;color:var(--text-secondary) }
+.pf-err   { font-size:.72rem;color:var(--danger);font-weight:600 }
+.pf-field input,.pf-field select { padding:.6rem .9rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.88rem;font-family:inherit;background:#fff;color:var(--text-primary);outline:none;transition:border-color var(--transition),box-shadow var(--transition) }
+.pf-field input:focus,.pf-field select:focus { border-color:var(--accent);box-shadow:0 0 0 3px var(--teal-dim) }
+.pf-empty-state { display:flex;flex-direction:column;align-items:center;gap:.75rem;padding:2.5rem;text-align:center;background:var(--cream-warm);border-radius:var(--radius-sm);border:1px dashed var(--border) }
+.pf-empty-state span { font-size:2.5rem }
+.pf-empty-state p { font-size:.875rem;color:var(--text-secondary) }
+.pf-addr-list { display:flex;flex-direction:column;gap:.75rem }
+.pf-addr-card { border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;background:var(--bg-card);display:flex;flex-direction:column;gap:.3rem;transition:border-color var(--transition) }
+.pf-addr-card--primary { border-color:var(--border-accent);background:rgba(44,138,138,.04) }
+.pf-addr-top { display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.2rem }
+.pf-addr-alias { font-size:.875rem;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:.5rem }
+.pf-addr-actions { display:flex;gap:.75rem;flex-shrink:0 }
+.pf-addr-text { font-size:.875rem;color:var(--text-secondary) }
+.pf-addr-ref  { font-size:.8rem;color:var(--text-muted) }
+.pf-card-list { display:flex;flex-direction:column;gap:.65rem }
+.pf-card-chip { display:flex;align-items:center;gap:.85rem;padding:.9rem 1.25rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-card);transition:border-color var(--transition) }
+.pf-card-chip--primary { border-color:var(--border-accent);background:rgba(44,138,138,.04) }
+.pf-card-icon  { font-size:1.6rem;flex-shrink:0 }
+.pf-card-info  { display:flex;flex-direction:column;gap:.1rem;flex:1 }
+.pf-card-alias { font-size:.88rem;font-weight:700;color:var(--text-primary) }
+.pf-card-last4 { font-size:.78rem;color:var(--text-muted);font-weight:500 }
+.pf-card-actions { display:flex;align-items:center;gap:.65rem;flex-shrink:0 }
+.pf-text-btn { font-size:.78rem;font-weight:700;color:var(--accent);background:none;border:none;font-family:inherit;transition:opacity var(--transition) }
+.pf-text-btn:hover { opacity:.7 }
+.pf-text-btn--danger { color:var(--danger)!important }
+.pf-primary-badge { font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:.2em .65em;border-radius:999px;background:var(--teal-dim);color:var(--teal-dark);border:1px solid var(--border-accent) }
+.pf-secure-note { font-size:.78rem;color:var(--text-muted);background:rgba(44,138,138,.06);border:1px solid var(--border-accent);border-radius:var(--radius-sm);padding:.6rem .9rem;line-height:1.5 }
+
+/* Card visual preview */
+.card-preview { border-radius:14px;padding:1.5rem 1.75rem;display:flex;flex-direction:column;gap:1rem;position:relative;overflow:hidden;background:linear-gradient(135deg,#1A3A5C 0%,#1F6E6E 100%);color:#fff;min-height:160px;box-shadow:0 12px 36px rgba(31,58,95,.22);font-family:'Courier New',monospace;transition:background .4s }
+.card-preview--visa       { background:linear-gradient(135deg,#1A3A5C 0%,#2C5F8A 100%) }
+.card-preview--mastercard { background:linear-gradient(135deg,#7B1818 0%,#C0392B 100%) }
+.card-preview--amex       { background:linear-gradient(135deg,#004B87 0%,#1A6E8A 100%) }
+.card-preview--tarjeta    { background:linear-gradient(135deg,#3A3A3A 0%,#555 100%) }
+.card-preview::before { content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.07) }
+.cp-top { display:flex;justify-content:space-between;align-items:center }
+.cp-brand { font-size:.85rem;font-weight:700;font-family:var(--font-display);letter-spacing:.05em }
+.cp-chip  { font-size:1.2rem;color:rgba(255,255,255,.6) }
+.cp-number { font-size:1.15rem;letter-spacing:.2em;font-weight:600 }
+.cp-bottom { display:flex;gap:2rem }
+.cp-lbl { display:block;font-size:.55rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55);margin-bottom:.2rem;font-family:var(--font-display) }
+.cp-val { font-size:.82rem;font-weight:600 }
+
+@media (max-width:640px) {
+  .pf-info-grid { grid-template-columns:1fr }
+  .pf-grid-2    { grid-template-columns:1fr }
+  .pf-pets-link { margin-left:0 }
+}
