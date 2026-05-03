@@ -5,7 +5,7 @@ import { useCart } from '../../context/CartContext';
 import { SERVICES } from '../../data/services';
 import { toast } from 'react-toastify';
 import Logo from '../Logo/Logo';
-import '../NavBar/NavBar.css';
+import './NavBar.css';
 
 const NavBar = () => {
   const { user, logout } = useAuth();
@@ -124,8 +124,8 @@ const NavBar = () => {
               </button>
               {userMenuOpen && (
                 <div className="dropdown-menu">
-                  <NavLink to="/mis-mascotas" className="dropdown-item" onClick={closeAll}>🐾 Mis mascotas</NavLink>
-                  <NavLink to="/reservar"     className="dropdown-item" onClick={closeAll}>📅 Reservar</NavLink>
+                  <NavLink to="/perfil"   className="dropdown-item" onClick={closeAll}>👤 Mi perfil</NavLink>
+                  <NavLink to="/reservar" className="dropdown-item" onClick={closeAll}>📅 Reservar</NavLink>
                   <hr className="dropdown-divider" />
                   <button className="dropdown-item dropdown-item--danger" onClick={handleLogout}>
                     🚪 Cerrar sesión
@@ -174,7 +174,7 @@ const NavBar = () => {
 
         {user ? (
           <>
-            <NavLink to="/mis-mascotas" className="mobile-link" onClick={closeAll}>🐾 Mis mascotas</NavLink>
+            <NavLink to="/perfil"      className="mobile-link" onClick={closeAll}>🐾 Mi perfil</NavLink>
             <button className="mobile-link mobile-link-danger" onClick={handleLogout}>🚪 Cerrar sesión</button>
           </>
         ) : (

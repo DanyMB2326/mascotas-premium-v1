@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import NavBar               from './components/NavBar/NavBar';
 import Footer               from './components/Footer/Footer';
@@ -10,8 +10,7 @@ import ServiceDetail        from './components/ServiceDetail/ServiceDetail';
 import Reservar             from './components/Reservar/Reservar';
 import Login                from './components/Login/Login';
 import Register             from './components/Register/Register';
-import MisMascotas          from './components/MisMascotas/MisMascotas';
-import Perfil               from './components/Perfil/Perfil';
+import MiPerfil             from './components/MiPerfil/MiPerfil';
 import Tienda               from './components/Tienda/Tienda';
 import ProductDetail        from './components/ProductDetail/ProductDetail';
 import Cart                 from './components/Cart/Cart';
@@ -20,6 +19,10 @@ import AvisoPrivacidad      from './components/AvisoPrivacidad/AvisoPrivacidad';
 import TerminosCondiciones  from './components/TerminosCondiciones/TerminosCondiciones';
 import NotFound             from './components/NotFound/NotFound';
 import RequireAuth          from './components/RequireAuth/RequireAuth';
+
+const Protected = ({ children }) => (
+  <RequireAuth><div className="container">{children}</div></RequireAuth>
+);
 
 const App = () => (
   <>
@@ -41,15 +44,10 @@ const App = () => (
         <Route path="/register"            element={<div className="container"><Register /></div>} />
         <Route path="/aviso-privacidad"    element={<div className="container"><AvisoPrivacidad /></div>} />
         <Route path="/terminos"            element={<div className="container"><TerminosCondiciones /></div>} />
-        <Route
-          path="/perfil"
-          element={<RequireAuth><div className="container"><Perfil /></div></RequireAuth>}
-        />
-        <Route
-          path="/mis-mascotas"
-          element={<RequireAuth><div className="container"><MisMascotas /></div></RequireAuth>}
-        />
-        <Route path="*" element={<div className="container"><NotFound /></div>} />
+        {/* Perfil unificado — /perfil y /mis-mascotas apuntan al mismo componente */}
+        <Route path="/perfil"              element={<Protected><MiPerfil /></Protected>} />
+        <Route path="/mis-mascotas"        element={<Navigate to="/perfil" replace />} />
+        <Route path="*"                    element={<div className="container"><NotFound /></div>} />
       </Routes>
     </main>
     <Footer />
