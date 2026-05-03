@@ -5,11 +5,13 @@ import { SERVICES } from '../../data/services';
 import { toast } from 'react-toastify';
 import Logo from '../Logo/Logo';
 import './NavBar.css';
+
 const NavBar = () => {
   const { user, logout } = useAuth();
   const [menuOpen,     setMenuOpen]     = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [scrolled,     setScrolled]     = useState(false);
 
   const svcRef  = useRef(null);
   const userRef = useRef(null);
@@ -20,9 +22,14 @@ const NavBar = () => {
       if (svcRef.current  && !svcRef.current.contains(e.target))  setServicesOpen(false);
       if (userRef.current && !userRef.current.contains(e.target)) setUserMenuOpen(false);
     };
-
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const closeAll = () => {
@@ -41,7 +48,7 @@ const NavBar = () => {
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'Mi cuenta';
 
   return (
-    <header className="navbar">
+    <header className={`navbar${scrolled ? ' navbar--scrolled' : ''}`}>
       <div className="navbar-inner container">
 
         <Link to="/" className="navbar-logo" onClick={closeAll}>
@@ -55,6 +62,10 @@ const NavBar = () => {
         <nav className="navbar-nav">
           <NavLink to="/" end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={closeAll}>
             Inicio
+          </NavLink>
+
+          <NavLink to="/nosotros" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} onClick={closeAll}>
+            Nosotros
           </NavLink>
 
           {/* SERVICIOS DROPDOWN */}
@@ -92,7 +103,7 @@ const NavBar = () => {
               <button
                 type="button"
                 className="nav-link nav-link-btn nav-user-btn"
-                onClick={() => { setUserMenuOpen((v) => !v); setServicesOpen(false); }} 
+                onClick={() => { setUserMenuOpen((v) => !v); setServicesOpen(false); }}
                 aria-expanded={userMenuOpen}
               >
                 👤 {displayName} ▾
@@ -109,7 +120,6 @@ const NavBar = () => {
               )}
             </div>
           ) : (
-
             <>
               <NavLink to="/login"    className="nav-link" onClick={closeAll}>Iniciar sesión</NavLink>
               <NavLink to="/register" className="nav-cta"  onClick={closeAll}>Crear cuenta</NavLink>
@@ -129,11 +139,12 @@ const NavBar = () => {
         </button>
       </div>
 
-      {/* MOBILE MENU*/}
+      {/* MOBILE MENU */}
       <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
         <NavLink to="/"          className="mobile-link" onClick={closeAll}>Inicio</NavLink>
+        <NavLink to="/nosotros"  className="mobile-link" onClick={closeAll}>🐾 Nosotros</NavLink>
         <NavLink to="/servicios" className="mobile-link" onClick={closeAll}>Todos los servicios</NavLink>
-         <div className="mobile-section">Servicios</div>
+        <div className="mobile-section">Servicios</div>
         {SERVICES.map((s) => (
           <NavLink key={s.id} to={`/servicios/${s.id}`} className="mobile-link mobile-link-svc" onClick={closeAll}>
             {s.emoji} {s.nombre}

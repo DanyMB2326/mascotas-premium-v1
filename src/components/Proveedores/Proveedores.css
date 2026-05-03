@@ -1,0 +1,160 @@
+.proveedores-section {
+  background: var(--cream-warm);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 4rem 0;
+}
+
+.proveedores-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.proveedores-header h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-weight: 700;
+  color: var(--brown);
+  margin: 0.4rem 0 0.3rem;
+}
+
+.proveedores-header p {
+  font-size: 0.97rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 540px;
+}
+
+/* ── Marca cards ── */
+.marcas-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.marca-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+.marca-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(31, 58, 95, 0.1);
+}
+.marca-card--navy  { border-top: 3px solid var(--navy); }
+.marca-card--gold  { border-top: 3px solid var(--gold); }
+.marca-card--teal  { border-top: 3px solid var(--teal); }
+.marca-card--brown { border-top: 3px solid var(--brown); }
+
+.marca-avatar {
+  width: 52px; height: 52px;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+.marca-avatar--navy  { background: var(--navy-dim);  color: var(--navy); }
+.marca-avatar--gold  { background: var(--gold-dim);  color: #8A6A0F; }
+.marca-avatar--teal  { background: var(--teal-dim);  color: var(--teal-dark); }
+.marca-avatar--brown { background: rgba(107,85,68,.1); color: var(--brown); }
+
+.marca-nombre {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--brown);
+}
+
+.marca-cat {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.marca-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.22em 0.75em;
+  border-radius: 999px;
+  background: var(--teal-dim);
+  color: var(--teal-dark);
+  border: 1px solid var(--border-accent);
+}
+
+/* ── Categorías ── */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.cat-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: border-color var(--transition), transform var(--transition);
+}
+.cat-card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-3px);
+}
+
+.cat-emoji { font-size: 2rem; line-height: 1; }
+
+.cat-label {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--brown);
+}
+
+.cat-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* ── Nota inferior ── */
+.proveedores-nota {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-accent);
+  border-radius: var(--radius);
+}
+
+/* ── Responsive ── */
+@media (max-width: 960px) {
+  .marcas-grid { grid-template-columns: repeat(2, 1fr); }
+  .cat-grid    { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 540px) {
+  .marcas-grid { grid-template-columns: 1fr; }
+  .cat-grid    { grid-template-columns: 1fr 1fr; }
+}
