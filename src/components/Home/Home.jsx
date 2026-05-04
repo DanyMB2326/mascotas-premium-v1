@@ -26,17 +26,16 @@ const TESTIMONIOS = [
 ];
 
 const VALORES_PREVIEW = [
-  { emoji: '🐾', label: 'Bienestar' },
-  { emoji: '💚', label: 'Empatía' },
-  { emoji: '🛡️', label: 'Responsabilidad' },
+  { emoji: '🌿', label: 'Bienestar' },
+  { emoji: '💚', label: 'Empatía y Respeto' },
   { emoji: '⭐', label: 'Calidad' },
   { emoji: '🤝', label: 'Confianza' },
-  { emoji: '💡', label: 'Innovación' },
 ];
 
 const Home = () => {
-  const featured = SERVICES.find((s) => s.featured);
-  const regular  = SERVICES.filter((s) => !s.featured);
+  const featured  = SERVICES.find((s) => s.featured);
+  const FEATURED_IDS = ['estetica', 'spa', 'pension', 'adiestramiento'];
+  const regular   = SERVICES.filter((s) => FEATURED_IDS.includes(s.id));
 
   return (
     <div className="home">
@@ -85,21 +84,6 @@ const Home = () => {
               <Logo size={180} />
               <p className="hero-card-label">Clínica Boutique Animal</p>
             </div>
-            <div className="hero-badge hero-badge--1">
-              <span className="hero-badge-icon">✂️</span>
-              <span>Estética profesional</span>
-            </div>
-            <div className="hero-badge hero-badge--2">
-              <span className="hero-badge-icon">🏨</span>
-              <span>Pensión 24/7</span>
-            </div>
-            <div className="hero-badge hero-badge--3">
-              <span className="hero-badge-icon">🌿</span>
-              <span>Spa & bienestar</span>
-            </div>
-            <span className="hero-paw paw-1">🐾</span>
-            <span className="hero-paw paw-2">🐾</span>
-            <span className="hero-paw paw-3">🐾</span>
           </div>
 
         </div>

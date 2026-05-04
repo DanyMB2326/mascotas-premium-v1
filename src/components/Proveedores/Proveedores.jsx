@@ -49,7 +49,7 @@ const Proveedores = () => (
           </p>
         </div>
         <Link to="/tienda" className="btn-primary proveedores-cta">
-          🛍️ Ver tienda completa →
+          Ver tienda completa →
         </Link>
       </div>
 
