@@ -5,7 +5,7 @@ import { db }            from '../../firebase/config';
 import { useCart }        from '../../context/CartContext';
 import { useAuth }        from '../../context/AuthContext';
 import { useUserProfile } from '../../context/UserProfileContext';
-import '../CheckOut/Checkout.css';
+import '../CheckOut/CheckOut.css';
 
 const COLONIAS = [
   'Álvaro Obregón',
