@@ -28,7 +28,7 @@
 
 /* ── Wrapper — solo maneja padding vertical ── */
 .footer-inner {
-  padding: 2rem 0 2rem;
+  padding: 8rem 0 5rem;
 }
 
 /* ── Grid layout — dentro del container ── */
@@ -105,6 +105,11 @@
   border: 1px solid rgba(44, 138, 138, 0.4);
   border-radius: 999px;
   padding: 0.3rem 0.75rem;
+}
+.footer-open-badge--closed {
+  background: rgba(192, 57, 43, 0.2);
+  border-color: rgba(192, 57, 43, 0.4);
+  color: rgba(250, 200, 190, 0.85);
 }
 
 /* ── Bottom bar ── */
