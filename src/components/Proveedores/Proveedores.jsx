@@ -83,7 +83,6 @@ const Proveedores = () => (
           ¿Tienes preferencia de marca para la alimentación de tu mascota durante la pensión o guardería?
           Indícanoslo al reservar. También puedes traer su alimento habitual. 🐾
         </p>
-        <Link to="/tienda" className="btn-outline">Ver catálogo completo →</Link>
       </div>
 
     </div>
