@@ -86,10 +86,10 @@ const ServiceDetail = () => {
         <section className="service-section">
           <h2>Cómo funciona</h2>
           <ol className="service-steps">
-            <li><span className="step">1</span><div><strong>Reservás online</strong><p>Elegís servicio, día y horario.</p></div></li>
-            <li><span className="step">2</span><div><strong>Cargamos los datos de tu mascota</strong><p>Si tenés cuenta usamos los guardados.</p></div></li>
+            <li><span className="step">1</span><div><strong>Reservas online</strong><p>Eliges servicio, día y horario.</p></div></li>
+            <li><span className="step">2</span><div><strong>Cargamos los datos de tu mascota</strong><p>Si tienes cuenta usamos los guardados.</p></div></li>
             <li><span className="step">3</span><div><strong>Confirmamos por WhatsApp</strong><p>Y enviamos recordatorio el día previo.</p></div></li>
-            <li><span className="step">4</span><div><strong>Atención y reporte</strong><p>Recibís fotos durante el servicio y diagnóstico al finalizar.</p></div></li>
+            <li><span className="step">4</span><div><strong>Atención y reporte</strong><p>Recibes fotos durante el servicio y diagnóstico al finalizar.</p></div></li>
           </ol>
         </section>
       </div>

@@ -5,7 +5,7 @@ import { db } from '../../firebase/config';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import Loader from '../Loader/Loader';
-import './MisMascotas.css';
+import '../MisMascotas/MisMascotas.css';
 
 const EMPTY_PET = {
   nombre:   '',
@@ -58,7 +58,7 @@ const MisMascotas = () => {
       );
       setMascotas(updatedList);
     } catch {
-      toast.error('Error al guardar. Intentá de nuevo.');
+      toast.error('Error al guardar. Intenta de nuevo.');
     } finally {
       setSaving(false);
     }

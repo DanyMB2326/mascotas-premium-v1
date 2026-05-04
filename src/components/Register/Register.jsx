@@ -5,7 +5,7 @@ import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Logo from '../Logo/Logo';
-import './Register.css';
+import '../Register/Register.css';
 
 const Register = () => {
   const [nombre,          setNombre]          = useState('');
@@ -22,7 +22,7 @@ const Register = () => {
     e.preventDefault();
 
     if (!nombre.trim() || !email.trim() || !password || !confirmPassword) {
-      toast.error('Completá todos los campos.');
+      toast.error('Completa todos los campos.');
       return;
     }
     if (password !== confirmPassword) {
@@ -46,14 +46,14 @@ const Register = () => {
         createdAt: serverTimestamp(),
       });
 
-      toast.success('¡Cuenta creada! Cargá los datos de tu mascota 🐾');
+      toast.success('¡Cuenta creada! Carga los datos de tu mascota 🐾');
       navigate('/mis-mascotas');
     } catch (err) {
       const msg = {
         'auth/email-already-in-use': 'Ese email ya está registrado.',
         'auth/invalid-email':        'El formato del email no es válido.',
         'auth/weak-password':        'La contraseña es muy débil (mínimo 6 caracteres).',
-        'auth/network-request-failed': 'Sin conexión. Verificá tu internet.',
+        'auth/network-request-failed': 'Sin conexión. Verifica tu internet.',
       };
       toast.error(msg[err.code] || `Error: ${err.message}`);
     } finally {

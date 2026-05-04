@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useUserProfile } from '../../context/UserProfileContext';
 import useMascotas from '../../hooks/useMascotas';
 import Loader from '../Loader/Loader';
-import './Reservar.css';
+import '../Reservar/Reservar.css';
 
 const HORARIOS = ['9:00', '10:00', '11:00', '12:00', '13:00', '15:00', '16:00', '17:00', '18:00'];
 
@@ -117,8 +117,8 @@ const Reservar = () => {
 
   const validate = () => {
     const errs = {};
-    if (!selectedService) errs.servicio = 'Elegí un servicio';
-    if (!selectedOption)  errs.opcion   = 'Elegí una opción';
+    if (!selectedService) errs.servicio = 'Elige un servicio';
+    if (!selectedOption)  errs.opcion   = 'Elige una opción';
 
     if (!form.nombreDueno.trim()) errs.nombreDueno = 'Requerido';
     if (!form.telefono.trim())    errs.telefono    = 'Requerido';
@@ -129,7 +129,7 @@ const Reservar = () => {
     if (!form.raza.trim())          errs.raza          = 'Requerido';
 
     if (!subscription) {
-      if (!form.fecha) errs.fecha = 'Seleccioná la fecha';
+      if (!form.fecha) errs.fecha = 'Selecciona la fecha';
     }
     if (overnight) {
       if (!form.fechaFin) errs.fechaFin = 'Seleccioná la fecha de salida';
@@ -137,7 +137,7 @@ const Reservar = () => {
         errs.fechaFin = 'Debe ser posterior al ingreso';
       }
     } else if (!subscription) {
-      if (!form.hora) errs.hora = 'Seleccioná un horario';
+      if (!form.hora) errs.hora = 'Selecciona un horario';
     }
 
     return errs;
@@ -156,7 +156,7 @@ const Reservar = () => {
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
-      toast.error('Revisá los campos marcados.');
+      toast.error('Revisa los campos marcados.');
       return;
     }
 
@@ -205,7 +205,7 @@ const Reservar = () => {
       toast.success('¡Reserva confirmada! 🐾');
     } catch (err) {
       console.error(err);
-      toast.error('No pudimos registrar la reserva. Intentá de nuevo.');
+      toast.error('No pudimos registrar la reserva. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -253,8 +253,8 @@ const Reservar = () => {
     <section className="reservar-page">
       <div className="section-header">
         <span className="tag">Reservar</span>
-        <h1>{service ? service.nombre : 'Reservá un servicio'}</h1>
-        <p>{service ? service.short : 'Elegí el servicio, día y hora. Confirmamos al instante.'}</p>
+        <h1>{service ? service.nombre : 'Reserva un servicio'}</h1>
+        <p>{service ? service.short : 'Elige el servicio, día y hora. Confirmamos al instante.'}</p>
       </div>
 
       {!user && (
@@ -351,7 +351,7 @@ const Reservar = () => {
                   ))}
                 </select>
                 <p className="form-hint">
-                  ¿Falta alguna? <Link to="/mis-mascotas">Gestioná tus mascotas</Link>
+                  ¿Falta alguna? <Link to="/mis-mascotas">Gestiona tus mascotas</Link>
                 </p>
               </div>
             )}
@@ -576,7 +576,7 @@ const Reservar = () => {
                 )}
               </>
             ) : (
-              <p className="resumen-empty">Elegí un servicio para ver el detalle.</p>
+              <p className="resumen-empty">Elige un servicio para ver el detalle.</p>
             )}
           </div>
 

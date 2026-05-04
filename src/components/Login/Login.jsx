@@ -4,7 +4,7 @@ import { auth } from '../../firebase/config';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Logo from '../Logo/Logo';
-import './Login.css';
+import '../Login/Login.css';
 
 const Login = () => {
   const [email, setEmail]           = useState('');
@@ -16,7 +16,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email.trim() || !password) {
-      toast.error('Completá todos los campos.');
+      toast.error('Completa todos los campos.');
       return;
     }
     setLoading(true);
@@ -30,8 +30,8 @@ const Login = () => {
         'auth/wrong-password':     'Contraseña incorrecta.',
         'auth/invalid-email':      'El email no tiene un formato válido.',
         'auth/invalid-credential': 'Email o contraseña incorrectos.',
-        'auth/too-many-requests':  'Demasiados intentos. Esperá unos minutos.',
-        'auth/network-request-failed': 'Sin conexión. Verificá tu internet.',
+        'auth/too-many-requests':  'Demasiados intentos. Espera unos minutos.',
+        'auth/network-request-failed': 'Sin conexión. Verifica tu internet.',
       };
       toast.error(msg[err.code] || `Error: ${err.message}`);
     } finally {
