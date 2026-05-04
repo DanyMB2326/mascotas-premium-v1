@@ -2,7 +2,7 @@ import { Link }    from 'react-router-dom';
 import { useMemo } from 'react';
 import Logo        from '../Logo/Logo';
 import { SERVICES }from '../../data/services';
-import './Footer.css';
+import '../Footer/Footer.css';
 
 /* ── Horario real: Lun–Sáb 9:00–19:00, zona CDMX ── */
 const useIsOpen = () =>
