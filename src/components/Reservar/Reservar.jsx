@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { db } from '../../firebase/config';
 import { SERVICES, findService } from '../../data/services';
 import { useAuth } from '../../context/AuthContext';
+import { useUserProfile } from '../../context/UserProfileContext';
 import useMascotas from '../../hooks/useMascotas';
 import Loader from '../Loader/Loader';
 import './Reservar.css';
@@ -41,6 +42,7 @@ const Reservar = () => {
   const [params]       = useSearchParams();
   const navigate       = useNavigate();
   const { user }       = useAuth();
+  const { profile, loading: profileLoading } = useUserProfile();
   const { mascotas }   = useMascotas();
 
   const [selectedService, setSelectedService] = useState(serviceId || '');
@@ -60,39 +62,51 @@ const Reservar = () => {
   const subscription = isSubscriptionService(service);
   const today        = new Date().toISOString().split('T')[0];
 
-  /* ── Prefill from authenticated user ── */
+  /* ── Prefill desde Mi información — espera a que el perfil cargue de Firestore ── */
   useEffect(() => {
-    if (!user) return;
+    if (profileLoading || !user) return;
+    const nombrePerfil = [profile.nombre, profile.apellido].filter(Boolean).join(' ');
     setForm((prev) => ({
       ...prev,
-      nombreDueno: prev.nombreDueno || user.displayName || '',
-      email:       prev.email       || user.email || '',
+      nombreDueno: nombrePerfil || user.displayName || '',
+      email:       user.email   || '',
+      telefono:    profile.telefono || prev.telefono || '',
     }));
-  }, [user]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileLoading, user]);
 
 /* ── Apply selected pet from saved list ── */
   useEffect(() => {
-    if (form.mascotaId === 'manual' || !mascotas.length) return;
-    const pet = mascotas.find((m) => (m.id || '') === form.mascotaId);
-    if (!pet) return;
-    setForm((prev) => ({
-      ...prev,
-      nombreMascota: pet.nombre || '',
-      especie:       pet.especie || 'perro',
-      raza:          pet.raza || '',
-      peso:          pet.peso || '',
-      edad:          pet.edad || '',
-      alergias:      pet.alergias || '',
-      medicacion:    pet.medicacion || '',
-    }));
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (cancelled || form.mascotaId === 'manual' || !mascotas.length) return;
+      const pet = mascotas.find((m) => (m.id || '') === form.mascotaId);
+      if (!pet) return;
+      setForm((prev) => ({
+        ...prev,
+        nombreMascota: pet.nombre     || '',
+        especie:       pet.especie    || 'perro',
+        raza:          pet.raza       || '',
+        peso:          pet.peso       || '',
+        edad:          pet.edad       || '',
+        alergias:      pet.alergias   || '',
+        medicacion:    pet.medicacion || '',
+      }));
+    });
+    return () => { cancelled = true; };
   }, [form.mascotaId, mascotas]);
 
   /* ── Reset option when service changes ── */
   useEffect(() => {
-    if (!service) { setSelectedOption(''); return; }
-    if (!service.options.find((o) => o.id === selectedOption)) {
-      setSelectedOption('');
-    }
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (cancelled) return;
+      if (!service) { setSelectedOption(''); return; }
+      if (!service.options.find((o) => o.id === selectedOption)) {
+        setSelectedOption('');
+      }
+    });
+    return () => { cancelled = true; };
   }, [service, selectedOption]);
 
   const handleField = (e) => {
@@ -250,6 +264,13 @@ const Reservar = () => {
             <p>Si <Link to="/login">iniciás sesión</Link> podés reutilizar los datos de tus mascotas guardadas.</p>
           </div>
           <Link to="/register" className="btn-outline">Crear cuenta</Link>
+        </div>
+      )}
+
+      {user && (profile.nombre || profile.telefono) && (
+        <div className="reservar-autofill-notice">
+          ✨ Datos autocompletados desde tu perfil.{' '}
+          <Link to="/perfil">Editar perfil →</Link>
         </div>
       )}
 
