@@ -197,7 +197,8 @@ const Home = () => {
 
       {/* ── Paquetes ── */}
       {featured && (
-        <section className="packages container">
+        <section className="packages">
+          <div className="container">
           <div className="packages-header">
             <span className="tag tag-gold">📦 Suscripción mensual</span>
             <h2>{featured.nombre}</h2>
@@ -221,6 +222,7 @@ const Home = () => {
                 </Link>
               </div>
             ))}
+          </div>
           </div>
         </section>
       )}

@@ -77,7 +77,7 @@
 .stat-label { font-size: .77rem; color: var(--text-secondary); font-weight: 600; }
 .stat-divider { width: 1px; height: 32px; background: var(--border); }
 
-/* ── Hero logo card (original) ── */
+/* ── Hero logo card ── */
 .hero-visual {
   position: relative;
   display: flex; align-items: center; justify-content: center;
@@ -86,11 +86,12 @@
 
 .hero-visual-bg {
   position: absolute;
-  width: 380px; height: 380px;
+  width: 360px; height: 360px;
   border-radius: 50%;
   background: radial-gradient(circle, var(--teal-dim) 0%, transparent 70%);
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 
 .hero-card {
@@ -110,30 +111,20 @@
   color: var(--text-muted);
 }
 
-.hero-badge {
-  position: absolute;
-  display: flex; align-items: center; gap: .5rem;
-  background: #fff;
-  border: 1.5px solid var(--border);
-  border-radius: 999px;
-  padding: .45rem .9rem .45rem .5rem;
-  font-size: .78rem; font-weight: 700;
-  color: var(--text-primary);
-  box-shadow: 0 8px 24px rgba(31,58,95,.1);
-  z-index: 3; white-space: nowrap;
-}
-.hero-badge-icon { font-size: 1.1rem; }
-.hero-badge--1 { top: 12%; left: -5%;  animation: float 5s ease-in-out 0s infinite; }
-.hero-badge--2 { bottom: 18%; right: -2%; animation: float 6.5s ease-in-out 1.5s infinite; }
-.hero-badge--3 { top: 60%; left: -8%; animation: float 7s ease-in-out .75s infinite; }
-
+/* 7 paws scattered around the card */
 .hero-paw {
-  position: absolute; font-size: 2rem; opacity: .7;
-  animation: float 4s ease-in-out infinite; pointer-events: none;
+  position: absolute;
+  animation: float 4s ease-in-out infinite;
+  pointer-events: none;
+  user-select: none;
 }
-.paw-1 { top: 6%;   right: 10%; animation-delay: 0s;   font-size: 1.6rem; opacity: .5; }
-.paw-2 { bottom: 8%; left: 10%; font-size: 2.2rem;      animation-delay: 1.5s; }
-.paw-3 { top: 40%;  right: 4%;  animation-delay: 2.8s;  font-size: 1.4rem; opacity: .5; }
+.paw-1 { top: 6%;    right: 10%; font-size: 1.6rem; opacity: .50; animation-delay: 0s;   animation-duration: 5s; }
+.paw-2 { bottom: 8%; left: 10%;  font-size: 2.2rem; opacity: .65; animation-delay: 1.5s; animation-duration: 6s; }
+.paw-3 { top: 42%;   right: 4%;  font-size: 1.4rem; opacity: .45; animation-delay: 2.8s; animation-duration: 7s; }
+.paw-4 { top: 10%;   left: 6%;   font-size: 1.9rem; opacity: .55; animation-delay: 0.8s; animation-duration: 5.5s; }
+.paw-5 { bottom: 12%;right: 8%;  font-size: 1.2rem; opacity: .40; animation-delay: 2s;   animation-duration: 4.5s; }
+.paw-6 { top: 68%;   left: 4%;   font-size: 2.5rem; opacity: .30; animation-delay: 3.5s; animation-duration: 8s; }
+.paw-7 { bottom: 28%;left: 18%;  font-size: 1rem;   opacity: .35; animation-delay: 1.2s; animation-duration: 6.5s; }
 
 /* ──── BENEFITS BAND — full bleed ───────────────────────── */
 .benefits-band {
@@ -170,7 +161,8 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  padding-top: 1.5rem;         /* ← espacio extra entre borde superior y título */
 }
 .services-header h2 {
   font-family: var(--font-serif);
@@ -185,8 +177,8 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
+  align-items: stretch;        /* ← fuerza igual altura en todas las celdas */
 }
-
 .service-card {
   position: relative;
   background: var(--bg-card);
@@ -194,6 +186,7 @@
   border-radius: var(--radius);
   padding: 1.5rem;
   display: flex; flex-direction: column; gap: .5rem;
+  height: 100%;                /* ← ocupa todo el alto disponible de la celda */
   transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
   overflow: hidden;
 }
@@ -315,7 +308,7 @@
   background: linear-gradient(135deg, var(--cream-warm) 0%, #fff 100%);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 3rem 2.5rem;
+  padding: 4.5rem 2.5rem 3rem;   /* más espacio arriba */
 }
 .packages-header {
   text-align: center;
@@ -334,7 +327,6 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
-  align-items: start;
 }
 
 .package-card {
@@ -350,7 +342,6 @@
 .package-card--featured {
   border-color: var(--gold);
   box-shadow: 0 12px 36px rgba(244,196,48,.2);
-  transform: scale(1.03);
 }
 .package-badge {
   position: absolute;
@@ -364,7 +355,13 @@
 .package-price { font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; color: var(--accent); line-height: 1; }
 .package-currency { font-size: 1.2rem; vertical-align: super; margin-right: .15rem; }
 .package-period   { font-size: .95rem; color: var(--text-secondary); font-weight: 500; }
-.package-bullets  { list-style: none; display: flex; flex-direction: column; gap: .5rem; margin: .5rem 0 1rem; }
+/* flex:1 empuja el botón al fondo, igualando la altura visual de todas las cards */
+.package-bullets {
+  list-style: none;
+  display: flex; flex-direction: column; gap: .5rem;
+  margin: .5rem 0 1rem;
+  flex: 1;
+}
 .package-bullets li { font-size: .875rem; color: var(--text-secondary); }
 
 /* ──── TESTIMONIALS ─────────────────────────────────────── */
@@ -464,8 +461,6 @@
 /* ──── RESPONSIVE ───────────────────────────────────────── */
 @media (max-width: 1100px) {
   .services-grid { grid-template-columns: repeat(3, 1fr); }
-  .hero-badge--1 { left: -2%; }
-  .hero-badge--3 { left: -4%; }
 }
 
 @media (max-width: 960px) {
@@ -476,10 +471,7 @@
     padding-bottom: 4rem;
     max-height: none;
   }
-  .hero-visual  { min-height: 320px; }
-  .hero-badge--1{ top: 5%;  left: 2%; }
-  .hero-badge--3{ top: 55%; left: 2%; }
-  .hero-badge--2{ bottom: 12%; right: 2%; }
+  .hero-visual  { min-height: 360px; }
   .benefits-inner { flex-wrap: wrap; gap: 1.25rem; }
   .benefit { min-width: 40%; padding: .5rem 1rem; }
   .benefit-sep { display: none; }
@@ -494,7 +486,8 @@
 @media (max-width: 640px) {
   .home { gap: 3.5rem; }
   .hero-inner { padding-top: calc(var(--nav-height) + 1.5rem); }
-  .hero-visual { min-height: 260px; }
+  .hero-visual { min-height: 300px; }
+  .paw-6, .paw-7 { display: none; }
   .services-grid { grid-template-columns: repeat(2, 1fr); }
   .services-header { flex-direction: column; align-items: flex-start; }
   .testimonials-grid { grid-template-columns: 1fr; }
