@@ -6,10 +6,22 @@ import { useUserProfile } from '../../context/UserProfileContext';
 import '../CheckOut/CheckOut.css';
 
 const COLONIAS = [
-  'Condesa','Roma Norte','Roma Sur','Polanco','Narvarte',
-  'Del Valle','Coyoacán','Benito Juárez','Cuauhtémoc',
-  'Tlalpan','Álvaro Obregón','Azcapotzalco','Iztapalapa',
-  'Gustavo A. Madero','Xochimilco','Otra',
+  'Álvaro Obregón',
+  'Azcapotzalco',
+  'Benito Juárez',
+  'Coyoacán',
+  'Cuajimalpa de Morelos',
+  'Cuauhtémoc',
+  'Gustavo A. Madero',
+  'Iztacalco',
+  'Iztapalapa',
+  'La Magdalena Contreras',
+  'Miguel Hidalgo',
+  'Milpa Alta',
+  'Tláhuac',
+  'Tlalpan',
+  'Venustiano Carranza',
+  'Xochimilco',
 ];
 
 const FORMAS_PAGO = [
@@ -149,7 +161,7 @@ const Checkout = () => {
       if (cancelled) return;
       setForm((f) => ({
         ...f,
-        formaPago: hasSavedCards ? 'tarjeta-guardada' : 'transferencia',
+        formaPago: hasSavedCards ? 'tarjeta-guardada' : 'tarjeta-nueva',
       }));
     });
     return () => { cancelled = true; };
@@ -386,9 +398,11 @@ const Checkout = () => {
               </div>
             )}
 
-            {/* New card form */}
+            {/* New card form - shown by default when no saved cards */}
             {form.formaPago === 'tarjeta-nueva' && (
-              <CardSimulator value={cardData} onChange={setCardData} errors={cardErrors} />
+              <div className="ch-card-sim-wrap">
+                <CardSimulator value={cardData} onChange={setCardData} errors={cardErrors} />
+              </div>
             )}
 
             {form.formaPago === 'transferencia' && (

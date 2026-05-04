@@ -10,9 +10,22 @@ import '../MiPerfil/MiPerfil.css';
 
 /* ─── constants ─── */
 const COLONIAS = [
-  'Condesa','Roma Norte','Roma Sur','Polanco','Narvarte','Del Valle',
-  'Coyoacán','Benito Juárez','Cuauhtémoc','Tlalpan','Álvaro Obregón',
-  'Azcapotzalco','Iztapalapa','Gustavo A. Madero','Xochimilco','Otra',
+  'Álvaro Obregón',
+  'Azcapotzalco',
+  'Benito Juárez',
+  'Coyoacán',
+  'Cuajimalpa de Morelos',
+  'Cuauhtémoc',
+  'Gustavo A. Madero',
+  'Iztacalco',
+  'Iztapalapa',
+  'La Magdalena Contreras',
+  'Miguel Hidalgo',
+  'Milpa Alta',
+  'Tláhuac',
+  'Tlalpan',
+  'Venustiano Carranza',
+  'Xochimilco',
 ];
 const TABS = [
   { id: 'mascotas',    label: 'Mis mascotas',    icon: '🐾' },
