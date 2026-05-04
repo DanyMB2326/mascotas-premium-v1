@@ -28,7 +28,7 @@
 
 /* ── Wrapper — solo maneja padding vertical ── */
 .footer-inner {
-  padding: 8rem 0 5rem;
+  padding: 1.5rem 0 1rem;
 }
 
 /* ── Grid layout — dentro del container ── */
