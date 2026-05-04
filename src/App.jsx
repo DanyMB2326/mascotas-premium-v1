@@ -14,7 +14,7 @@ import MiPerfil             from './components/MiPerfil/MiPerfil';
 import Tienda               from './components/Tienda/Tienda';
 import ProductDetail        from './components/ProductDetail/ProductDetail';
 import Cart                 from './components/Cart/Cart';
-import Checkout             from './components/Checkout/Checkout';
+import Checkout             from './components/CheckOut/CheckOut';
 import AvisoPrivacidad      from './components/AvisoPrivacidad/AvisoPrivacidad';
 import TerminosCondiciones  from './components/TerminosCondiciones/TerminosCondiciones';
 import NotFound             from './components/NotFound/NotFound';
