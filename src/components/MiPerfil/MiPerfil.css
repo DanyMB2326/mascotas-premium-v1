@@ -248,3 +248,97 @@
   .mpf-tab       { padding: .6rem; flex: 0 0 auto; }
   .mpf-tabs      { justify-content: center; }
 }
+
+/* ── Historial ── */
+.hist-subtabs {
+  display: flex; gap: .5rem;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .3rem;
+}
+.hist-subtab {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .55rem 1rem;
+  border-radius: var(--radius-sm);
+  border: none; background: transparent;
+  font-family: var(--font-display); font-size: .875rem; font-weight: 600;
+  color: var(--text-secondary); cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+.hist-subtab:hover       { background: var(--teal-dim); color: var(--teal-dark); }
+.hist-subtab--active     { background: var(--accent); color: #fff; }
+.hist-count {
+  font-size: .72rem; font-weight: 800;
+  background: rgba(255,255,255,.25);
+  border-radius: 999px; padding: .1rem .45rem;
+  min-width: 20px; text-align: center;
+}
+.hist-subtab:not(.hist-subtab--active) .hist-count {
+  background: var(--bg-elevated); color: var(--text-muted);
+}
+
+.hist-list { display: flex; flex-direction: column; gap: .85rem; }
+
+.hist-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  display: flex; flex-direction: column; gap: .85rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.hist-card:hover { border-color: var(--border-accent); box-shadow: 0 4px 16px rgba(44,138,138,.08); }
+
+.hist-card-top {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 1rem;
+}
+.hist-card-info { display: flex; align-items: flex-start; gap: .85rem; flex: 1; min-width: 0; }
+.hist-emoji { font-size: 1.6rem; flex-shrink: 0; }
+.hist-title { font-family: var(--font-serif); font-size: 1rem; font-weight: 700; color: var(--brown); }
+.hist-sub   { font-size: .8rem; color: var(--text-muted); margin-top: .15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px; }
+
+.hist-estado {
+  display: inline-flex; align-items: center;
+  font-size: .7rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .06em;
+  padding: .25em .8em; border-radius: 999px;
+  background: color-mix(in srgb, var(--badge-color) 12%, transparent);
+  color: var(--badge-color);
+  border: 1px solid color-mix(in srgb, var(--badge-color) 35%, transparent);
+  flex-shrink: 0;
+}
+
+.hist-card-meta {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .75rem 1.5rem;
+  font-size: .8rem; color: var(--text-secondary);
+  padding-top: .75rem;
+  border-top: 1px solid var(--border);
+}
+.hist-id {
+  margin-left: auto;
+  font-family: 'Courier New', monospace;
+  font-size: .72rem; color: var(--text-muted);
+  background: var(--bg-elevated);
+  padding: .15rem .5rem; border-radius: var(--radius-sm);
+}
+
+.hist-items {
+  display: flex; flex-direction: column; gap: .35rem;
+  padding: .75rem 1rem;
+  background: var(--cream-warm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.hist-item {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: .82rem; color: var(--text-secondary);
+}
+.hist-item span:last-child { font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+
+@media (max-width: 540px) {
+  .hist-subtabs { flex-direction: column; }
+  .hist-id { margin-left: 0; }
+  .hist-sub { max-width: 200px; }
+}

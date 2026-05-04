@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db }            from '../../firebase/config';
 import { useCart }        from '../../context/CartContext';
 import { useAuth }        from '../../context/AuthContext';
 import { useUserProfile } from '../../context/UserProfileContext';
-import '../CheckOut/CheckOut.css';
+import '../CheckOut/Checkout.css';
 
 const COLONIAS = [
   'Álvaro Obregón',
@@ -213,14 +215,45 @@ const Checkout = () => {
       const ce = validateCard();
       setCardErrors(ce);
       if (Object.keys(ce).length) return;
-      // Simulate processing animation
       setProcessing(true);
       await new Promise((r) => setTimeout(r, 2200));
       setProcessing(false);
     }
 
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
+    try {
+      await addDoc(collection(db, 'pedidos'), {
+        userId:     user?.uid || null,
+        cliente: {
+          nombre:     `${form.nombre} ${form.apellido}`.trim(),
+          email:      form.email,
+          telefono:   form.telefono,
+        },
+        direccion: {
+          calle:      form.calle,
+          numExt:     form.numExt,
+          numInt:     form.numInt || null,
+          colonia:    form.colonia,
+          cp:         form.cp,
+          referencias:form.referencias || null,
+        },
+        items:      cartItems.map((i) => ({
+          id:       i.id,
+          title:    i.title,
+          price:    i.price,
+          quantity: i.quantity,
+          emoji:    i.emoji || null,
+        })),
+        subtotal:   totalPrice,
+        envio:      totalPrice >= 700 ? 0 : 120,
+        total:      totalPrice + (totalPrice >= 700 ? 0 : 120),
+        formaPago:  form.formaPago,
+        estado:     'confirmado',
+        createdAt:  serverTimestamp(),
+      });
+    } catch (err) {
+      console.error('Error guardando pedido:', err);
+    }
     clearCart();
     setSuccess(true);
     setLoading(false);

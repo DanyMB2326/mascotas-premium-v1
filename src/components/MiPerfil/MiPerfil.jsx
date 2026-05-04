@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link }              from 'react-router-dom';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db }                from '../../firebase/config';
 import { useAuth }           from '../../context/AuthContext';
 import { useUserProfile }    from '../../context/UserProfileContext';
 import { toast }             from 'react-toastify';
 import Loader                from '../Loader/Loader';
-import '../MiPerfil/MiPerfil.css';
+import './MiPerfil.css';
 
 /* ─── constants ─── */
 const COLONIAS = [
@@ -29,6 +29,7 @@ const COLONIAS = [
 ];
 const TABS = [
   { id: 'mascotas',    label: 'Mis mascotas',    icon: '🐾' },
+  { id: 'historial',   label: 'Historial',        icon: '📋' },
   { id: 'info',        label: 'Mi información',  icon: '👤' },
   { id: 'direcciones', label: 'Direcciones',     icon: '📍' },
   { id: 'pagos',       label: 'Métodos de pago', icon: '💳' },
@@ -475,6 +476,190 @@ const TabPagos = () => {
 };
 
 /* ══════════════════════
+   TAB HISTORIAL
+══════════════════════ */
+const ESTADO_BADGE = {
+  confirmado:            { label: 'Confirmado',   color: '#16a34a' },
+  confirmada:            { label: 'Confirmada',   color: '#16a34a' },
+  'pendiente-activacion':{ label: 'Pendiente',    color: '#B45309' },
+  cancelado:             { label: 'Cancelado',    color: 'var(--danger)' },
+  entregado:             { label: 'Entregado',    color: 'var(--accent)' },
+};
+
+const EstadoBadge = ({ estado }) => {
+  const cfg = ESTADO_BADGE[estado] || { label: estado, color: 'var(--text-muted)' };
+  return (
+    <span className="hist-estado" style={{ '--badge-color': cfg.color }}>
+      {cfg.label}
+    </span>
+  );
+};
+
+const TabHistorial = ({ user }) => {
+  const [reservas,  setReservas]  = useState([]);
+  const [pedidos,   setPedidos]   = useState([]);
+  const [loading,   setLoading]   = useState(true);
+  const [activeTab, setActiveTab] = useState('reservas');
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchAll = async () => {
+      try {
+        const [rSnap, pSnap] = await Promise.all([
+          getDocs(query(
+            collection(db, 'reservas'),
+            where('userId', '==', user.uid)
+          )),
+          getDocs(query(
+            collection(db, 'pedidos'),
+            where('userId', '==', user.uid)
+          )),
+        ]);
+
+        const sortByDate = (docs) =>
+          docs
+            .map((d) => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => {
+              const ta = a.createdAt?.toMillis?.() ?? 0;
+              const tb = b.createdAt?.toMillis?.() ?? 0;
+              return tb - ta;
+            });
+
+        setReservas(sortByDate(rSnap.docs));
+        setPedidos(sortByDate(pSnap.docs));
+      } catch (e) {
+        console.error('Historial error:', e);
+        toast.error('No se pudo cargar el historial.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAll();
+  }, [user]);
+
+  const fmt = (ts) => {
+    if (!ts) return '—';
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+  };
+
+  if (loading) return <Loader text="Cargando historial…" />;
+
+  return (
+    <div className="mpf-tab-content">
+
+      {/* Sub-tabs */}
+      <div className="hist-subtabs">
+        <button
+          className={`hist-subtab ${activeTab === 'reservas' ? 'hist-subtab--active' : ''}`}
+          onClick={() => setActiveTab('reservas')}
+        >
+          📅 Reservas <span className="hist-count">{reservas.length}</span>
+        </button>
+        <button
+          className={`hist-subtab ${activeTab === 'pedidos' ? 'hist-subtab--active' : ''}`}
+          onClick={() => setActiveTab('pedidos')}
+        >
+          🛒 Compras <span className="hist-count">{pedidos.length}</span>
+        </button>
+      </div>
+
+      {/* RESERVAS */}
+      {activeTab === 'reservas' && (
+        reservas.length === 0 ? (
+          <div className="mpf-empty mpf-empty--sm">
+            <span>📅</span>
+            <p>Aún no tienes reservas registradas.</p>
+            <Link to="/reservar" className="btn-outline">Reservar un servicio</Link>
+          </div>
+        ) : (
+          <div className="hist-list">
+            {reservas.map((r) => (
+              <div key={r.id} className="hist-card">
+                <div className="hist-card-top">
+                  <div className="hist-card-info">
+                    <span className="hist-emoji">
+                      {r.servicio?.id === 'estetica' ? '✂️' :
+                       r.servicio?.id === 'bano'     ? '🛁' :
+                       r.servicio?.id === 'spa'       ? '🌿' :
+                       r.servicio?.id === 'guarderia' ? '☀️' :
+                       r.servicio?.id === 'pension'   ? '🏨' :
+                       r.servicio?.id === 'adiestramiento' ? '🎓' :
+                       r.servicio?.id === 'transporte'? '🚐' : '📦'}
+                    </span>
+                    <div>
+                      <p className="hist-title">{r.servicio?.nombre || 'Servicio'}</p>
+                      <p className="hist-sub">{r.opcion?.label} · {r.mascota?.nombre}</p>
+                    </div>
+                  </div>
+                  <EstadoBadge estado={r.estado} />
+                </div>
+                <div className="hist-card-meta">
+                  <span>📅 {r.fecha || fmt(r.createdAt)}</span>
+                  {r.hora && <span>🕐 {r.hora}</span>}
+                  <span>💰 ${r.total?.toLocaleString('es-MX')} MXN</span>
+                  <span className="hist-id">#{r.id.slice(0, 8).toUpperCase()}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      )}
+
+      {/* PEDIDOS / COMPRAS */}
+      {activeTab === 'pedidos' && (
+        pedidos.length === 0 ? (
+          <div className="mpf-empty mpf-empty--sm">
+            <span>🛒</span>
+            <p>Aún no tienes compras registradas.</p>
+            <Link to="/tienda" className="btn-outline">Ir a la tienda</Link>
+          </div>
+        ) : (
+          <div className="hist-list">
+            {pedidos.map((p) => (
+              <div key={p.id} className="hist-card">
+                <div className="hist-card-top">
+                  <div className="hist-card-info">
+                    <span className="hist-emoji">🛍️</span>
+                    <div>
+                      <p className="hist-title">
+                        {p.items?.length === 1
+                          ? p.items[0].title
+                          : `${p.items?.length} productos`}
+                      </p>
+                      <p className="hist-sub">
+                        {p.items?.map((i) => `${i.emoji || ''}${i.title}`).join(' · ')}
+                      </p>
+                    </div>
+                  </div>
+                  <EstadoBadge estado={p.estado} />
+                </div>
+                <div className="hist-card-meta">
+                  <span>📅 {fmt(p.createdAt)}</span>
+                  <span>📍 {p.direccion?.colonia}</span>
+                  <span>💰 ${p.total?.toLocaleString('es-MX')} MXN</span>
+                  <span className="hist-id">#{p.id.slice(0, 8).toUpperCase()}</span>
+                </div>
+                {/* Items detalle */}
+                <div className="hist-items">
+                  {p.items?.map((item) => (
+                    <div key={item.id} className="hist-item">
+                      <span>{item.emoji} {item.title}</span>
+                      <span>×{item.quantity} · ${(item.price * item.quantity).toLocaleString('es-MX')}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      )}
+
+    </div>
+  );
+};
+
+/* ══════════════════════
    MAIN
 ══════════════════════ */
 const MiPerfil = () => {
@@ -521,6 +706,7 @@ const MiPerfil = () => {
 
       {/* Content */}
       {activeTab === 'mascotas'    && <TabMascotas    user={user} />}
+      {activeTab === 'historial'   && <TabHistorial   user={user} />}
       {activeTab === 'info'        && <TabInfo        user={user} />}
       {activeTab === 'direcciones' && <TabDirecciones />}
       {activeTab === 'pagos'       && <TabPagos />}
