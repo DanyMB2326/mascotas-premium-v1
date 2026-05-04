@@ -1,38 +1,18 @@
 import { Link } from 'react-router-dom';
-import '../Proveedores/Proveedores.css';
+import './Proveedores.css';
 
 const MARCAS = [
-  {
-    nombre: 'Royal Canin',
-    cat: 'Nutrición especializada por raza',
-    color: 'navy',
-    initial: 'RC',
-  },
-  {
-    nombre: "Hill's",
-    cat: 'Dietas veterinarias y prescription',
-    color: 'gold',
-    initial: "H's",
-  },
-  {
-    nombre: 'Purina Pro Plan',
-    cat: 'Alimento premium con ciencia',
-    color: 'teal',
-    initial: 'PP',
-  },
-  {
-    nombre: 'Dog Chow',
-    cat: 'Nutrición completa para el día a día',
-    color: 'brown',
-    initial: 'DC',
-  },
+  { nombre: 'Royal Canin',    cat: 'Nutrición especializada por raza',    logo: '/img/RoyalCanin.webp', color: 'royalcanin' },
+  { nombre: "Hill's",         cat: 'Dietas veterinarias y prescription',  logo: '/img/Hill.webp',       color: 'hills'      },
+  { nombre: 'Purina Pro Plan',cat: 'Alimento premium con ciencia',        logo: '/img/ProPlan.png',     color: 'purina'     },
+  { nombre: 'Dog Chow',       cat: 'Nutrición completa para el día a día',logo: '/img/DogChow.png',     color: 'dogchow'    },
 ];
 
 const CATEGORIAS = [
   { emoji: '🍖', label: 'Alimentos premium', desc: 'Croquetas, húmedos y snacks de alta calidad' },
-  { emoji: '🎾', label: 'Juguetes', desc: 'Estimulación mental y física para tu mascota' },
-  { emoji: '🛏️', label: 'Camas y descanso', desc: 'Camas ortopédicas, cobijas y accesorios de confort' },
-  { emoji: '🎀', label: 'Accesorios', desc: 'Correas, arneses, ropa y artículos de paseo' },
+  { emoji: '🎾', label: 'Juguetes',           desc: 'Estimulación mental y física para tu mascota' },
+  { emoji: '🛏️', label: 'Camas y descanso',  desc: 'Camas ortopédicas, cobijas y accesorios de confort' },
+  { emoji: '🎀', label: 'Accesorios',         desc: 'Correas, arneses, ropa y artículos de paseo' },
 ];
 
 const Proveedores = () => (
@@ -53,21 +33,18 @@ const Proveedores = () => (
         </Link>
       </div>
 
-      {/* Marcas partners */}
       <div className="marcas-grid">
-        {MARCAS.map((m) => (
-          <div key={m.nombre} className={`marca-card marca-card--${m.color}`}>
-            <div className={`marca-avatar marca-avatar--${m.color}`}>{m.initial}</div>
-            <div className="marca-info">
-              <h3 className="marca-nombre">{m.nombre}</h3>
-              <p className="marca-cat">{m.cat}</p>
+        {MARCAS.map(({ nombre, cat, logo, color }) => (
+          <div key={nombre} className={`marca-card marca-card--${color}`}>
+            <div className="marca-logo-wrap">
+              <img src={logo} alt={`Logo ${nombre}`} className="marca-logo-img" />
             </div>
+            <p className="marca-cat">{cat}</p>
             <span className="marca-badge">Aliado oficial</span>
           </div>
         ))}
       </div>
 
-      {/* Categorías de producto */}
       <div className="cat-grid">
         {CATEGORIAS.map((c) => (
           <div key={c.label} className="cat-card">
