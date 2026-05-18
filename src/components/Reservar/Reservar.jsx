@@ -1,16 +1,22 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { toast } from 'react-toastify';
-import { db } from '../../firebase/config';
+import {
+  collection, addDoc, doc, updateDoc,
+  serverTimestamp, increment,
+} from 'firebase/firestore';
+import { toast }           from 'react-toastify';
+import { db }              from '../../firebase/config';
 import { SERVICES, findService } from '../../data/services';
-import { useAuth } from '../../context/AuthContext';
-import { useUserProfile } from '../../context/UserProfileContext';
-import useMascotas from '../../hooks/useMascotas';
-import Loader from '../Loader/Loader';
+import { useAuth }         from '../../context/AuthContext';
+import { useUserProfile }  from '../../context/UserProfileContext';
+import useMascotas         from '../../hooks/useMascotas';
+import Loader              from '../Loader/Loader';
 import '../Reservar/Reservar.css';
 
-const HORARIOS = ['9:00', '10:00', '11:00', '12:00', '13:00', '15:00', '16:00', '17:00', '18:00'];
+const HORARIOS = [
+  '9:00','10:00','11:00','12:00','13:00',
+  '15:00','16:00','17:00','18:00',
+];
 
 const isSubscriptionService = (svc) => svc?.id === 'paquetes';
 const isOvernightService    = (svc) => svc?.id === 'pension';
@@ -18,23 +24,23 @@ const isOvernightService    = (svc) => svc?.id === 'pension';
 const buildEmptyForm = () => ({
   // dueño
   nombreDueno: '',
-  telefono: '',
-  email: '',
-  direccion: '',
+  telefono:    '',
+  email:       '',
+  direccion:   '',
   // mascota
-  mascotaId: 'manual',
+  mascotaId:     'manual',
   nombreMascota: '',
-  especie: 'perro',
-  raza: '',
-  peso: '',
-  edad: '',
-  alergias: '',
-  medicacion: '',
+  especie:       'perro',
+  raza:          '',
+  peso:          '',
+  edad:          '',
+  alergias:      '',
+  medicacion:    '',
   // reserva
-  fecha: '',
-  hora: '',
+  fecha:    '',
+  hora:     '',
   fechaFin: '',
-  notas: '',
+  notas:    '',
 });
 
 const Reservar = () => {
@@ -47,10 +53,10 @@ const Reservar = () => {
 
   const [selectedService, setSelectedService] = useState(serviceId || '');
   const [selectedOption,  setSelectedOption]  = useState(params.get('option') || '');
-  const [form, setForm]       = useState(buildEmptyForm);
-  const [errors, setErrors]   = useState({});
-  const [loading, setLoading] = useState(false);
-  const [reservaId, setReservaId] = useState(null);
+  const [form,       setForm]       = useState(buildEmptyForm);
+  const [errors,     setErrors]     = useState({});
+  const [loading,    setLoading]    = useState(false);
+  const [reservaId,  setReservaId]  = useState(null);
 
   const service = useMemo(() => findService(selectedService), [selectedService]);
   const option  = useMemo(
@@ -62,20 +68,20 @@ const Reservar = () => {
   const subscription = isSubscriptionService(service);
   const today        = new Date().toISOString().split('T')[0];
 
-  /* ── Prefill desde Mi información — espera a que el perfil cargue de Firestore ── */
+  // ── Prefill desde perfil ────────────────────────────────────
   useEffect(() => {
     if (profileLoading || !user) return;
     const nombrePerfil = [profile.nombre, profile.apellido].filter(Boolean).join(' ');
     setForm((prev) => ({
       ...prev,
       nombreDueno: nombrePerfil || user.displayName || '',
-      email:       user.email   || '',
+      email:       user.email || '',
       telefono:    profile.telefono || prev.telefono || '',
     }));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileLoading, user]);
 
-/* ── Apply selected pet from saved list ── */
+  // ── Prefill desde mascota guardada ──────────────────────────
   useEffect(() => {
     let cancelled = false;
     queueMicrotask(() => {
@@ -96,7 +102,7 @@ const Reservar = () => {
     return () => { cancelled = true; };
   }, [form.mascotaId, mascotas]);
 
-  /* ── Reset option when service changes ── */
+  // ── Reset opción cuando cambia el servicio ──────────────────
   useEffect(() => {
     let cancelled = false;
     queueMicrotask(() => {
@@ -139,18 +145,21 @@ const Reservar = () => {
     } else if (!subscription) {
       if (!form.hora) errs.hora = 'Selecciona un horario';
     }
-
     return errs;
   };
 
-  /* ── Total ── */
+  // ── Cálculo de noches y total ───────────────────────────────
   const noches = (() => {
     if (!overnight || !form.fecha || !form.fechaFin) return 0;
     const diff = new Date(form.fechaFin) - new Date(form.fecha);
     return Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
   })();
-  const total = option ? (overnight ? option.precio * noches : option.precio) : 0;
 
+  const total = option
+    ? (overnight ? option.precio * noches : option.precio)
+    : 0;
+
+  // ── Submit ──────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validate();
@@ -189,20 +198,40 @@ const Reservar = () => {
           label:  option.label,
           precio: option.precio,
         },
-        fecha:    form.fecha || null,
-        fechaFin: form.fechaFin || null,
-        hora:     form.hora || null,
-        noches:   noches || null,
+        fecha:     form.fecha    || null,
+        fechaFin:  form.fechaFin || null,
+        hora:      form.hora     || null,
+        noches:    noches        || null,
         total,
-        notas:    form.notas || null,
+        notas:     form.notas   || null,
         modalidad: subscription ? 'suscripcion' : (overnight ? 'estancia' : 'cita'),
-        estado:   subscription ? 'pendiente-activacion' : 'confirmada',
+        // ── Estado normalizado (mismo campo que usa el dashboard) ──
+        status: 'pendiente',
+        estado: subscription ? 'pendiente-activacion' : 'confirmada',
         createdAt: serverTimestamp(),
       };
 
+      // 1. Guardar la reserva
       const docRef = await addDoc(collection(db, 'reservas'), reserva);
       setReservaId(docRef.id);
       toast.success('¡Reserva confirmada! 🐾');
+
+      // ──────────────────────────────────────────────────────
+      // 2. Actualizar contadores del usuario en Firestore
+      //    para mantener las estadísticas del dashboard en sync
+      // ──────────────────────────────────────────────────────
+      if (user?.uid) {
+        try {
+          await updateDoc(doc(db, 'users', user.uid), {
+            totalReservas: increment(1),
+            lastActivity:  serverTimestamp(),
+          });
+        } catch {
+          // No interrumpir el flujo si falla el contador
+          console.warn('[Reservar] No se pudieron actualizar los contadores del usuario.');
+        }
+      }
+
     } catch (err) {
       console.error(err);
       toast.error('No pudimos registrar la reserva. Intenta de nuevo.');
@@ -211,20 +240,28 @@ const Reservar = () => {
     }
   };
 
-/* ── SUCCESS VIEW ── */
+  // ── Vista de éxito ──────────────────────────────────────────
   if (reservaId) {
     return (
       <div className="reservar-success">
         <div className="success-icon">✓</div>
-        <span className="tag">{subscription ? 'Suscripción registrada' : 'Reserva confirmada'}</span>
+        <span className="tag">
+          {subscription ? 'Suscripción registrada' : 'Reserva confirmada'}
+        </span>
         <h1>¡Listo!</h1>
         <p>
           {subscription ? (
-            <>Tu plan <strong>{option?.label}</strong> queda registrado. Te contactamos por WhatsApp para activarlo.</>
+            <>Tu plan <strong>{option?.label}</strong> queda registrado.
+            Te contactamos por WhatsApp para activarlo.</>
           ) : overnight ? (
-            <><strong>{form.nombreMascota}</strong> tendrá su lugar en <strong>{option?.label}</strong> del <strong>{form.fecha}</strong> al <strong>{form.fechaFin}</strong> ({noches} {noches === 1 ? 'noche' : 'noches'}).</>
+            <><strong>{form.nombreMascota}</strong> tendrá su lugar en{' '}
+            <strong>{option?.label}</strong> del <strong>{form.fecha}</strong>{' '}
+            al <strong>{form.fechaFin}</strong>{' '}
+            ({noches} {noches === 1 ? 'noche' : 'noches'}).</>
           ) : (
-            <>Reservamos <strong>{option?.label}</strong> para <strong>{form.nombreMascota}</strong> el <strong>{form.fecha}</strong> a las <strong>{form.hora}</strong>.</>
+            <>Reservamos <strong>{option?.label}</strong> para{' '}
+            <strong>{form.nombreMascota}</strong> el{' '}
+            <strong>{form.fecha}</strong> a las <strong>{form.hora}</strong>.</>
           )}
         </p>
         <div className="reservar-id-box">
@@ -235,12 +272,24 @@ const Reservar = () => {
           <span>Total estimado</span>
           <strong>${total.toLocaleString('es-MX')} MXN</strong>
         </div>
-        <p className="reservar-note">Te enviamos confirmación a <strong>{form.email}</strong>.</p>
+        <p className="reservar-note">
+          Te enviamos confirmación a <strong>{form.email}</strong>.
+        </p>
         <div className="reservar-success-actions">
-          <button className="btn-primary" onClick={() => { setReservaId(null); setForm(buildEmptyForm()); navigate('/'); }}>
+          <button
+            className="btn-primary"
+            onClick={() => {
+              setReservaId(null);
+              setForm(buildEmptyForm());
+              navigate('/');
+            }}
+          >
             Volver al inicio
           </button>
-          <button className="btn-outline" onClick={() => { setReservaId(null); setForm(buildEmptyForm()); }}>
+          <button
+            className="btn-outline"
+            onClick={() => { setReservaId(null); setForm(buildEmptyForm()); }}
+          >
             Otra reserva
           </button>
         </div>
@@ -248,20 +297,27 @@ const Reservar = () => {
     );
   }
 
-/* ── FORM VIEW ── */
+  // ── Vista del formulario ────────────────────────────────────
   return (
     <section className="reservar-page">
       <div className="section-header">
         <span className="tag">Reservar</span>
         <h1>{service ? service.nombre : 'Reserva un servicio'}</h1>
-        <p>{service ? service.short : 'Elige el servicio, día y hora. Confirmamos al instante.'}</p>
+        <p>
+          {service
+            ? service.short
+            : 'Elige el servicio, día y hora. Confirmamos al instante.'}
+        </p>
       </div>
 
       {!user && (
         <div className="reservar-banner">
           <div>
             <strong>💡 Tip</strong>
-            <p>Si <Link to="/login">iniciás sesión</Link> podés reutilizar los datos de tus mascotas guardadas.</p>
+            <p>
+              Si <Link to="/login">iniciás sesión</Link> podés reutilizar
+              los datos de tus mascotas guardadas.
+            </p>
           </div>
           <Link to="/register" className="btn-outline">Crear cuenta</Link>
         </div>
@@ -285,20 +341,29 @@ const Reservar = () => {
               <select
                 id="rs-servicio"
                 value={selectedService}
-                onChange={(e) => { setSelectedService(e.target.value); setErrors((p) => ({ ...p, servicio: '' })); }}
+                onChange={(e) => {
+                  setSelectedService(e.target.value);
+                  setErrors((p) => ({ ...p, servicio: '' }));
+                }}
                 className={errors.servicio ? 'input-error' : ''}
               >
                 <option value="">— Elegí un servicio —</option>
                 {SERVICES.map((s) => (
-                  <option key={s.id} value={s.id}>{s.emoji} {s.nombre}</option>
+                  <option key={s.id} value={s.id}>
+                    {s.emoji} {s.nombre}
+                  </option>
                 ))}
               </select>
-              {errors.servicio && <span className="field-error">{errors.servicio}</span>}
+              {errors.servicio && (
+                <span className="field-error">{errors.servicio}</span>
+              )}
             </div>
 
             {service && (
               <>
-                {errors.opcion && <span className="field-error">{errors.opcion}</span>}
+                {errors.opcion && (
+                  <span className="field-error">{errors.opcion}</span>
+                )}
                 <div className="opciones-grid">
                   {service.options.map((opt) => (
                     <label
@@ -306,9 +371,7 @@ const Reservar = () => {
                       className={`opcion-card ${selectedOption === opt.id ? 'selected' : ''}`}
                     >
                       <input
-                        type="radio"
-                        name="opcion"
-                        value={opt.id}
+                        type="radio" name="opcion" value={opt.id}
                         checked={selectedOption === opt.id}
                         onChange={() => setSelectedOption(opt.id)}
                         hidden
@@ -321,7 +384,9 @@ const Reservar = () => {
                       )}
                       <span className="opcion-precio">
                         ${opt.precio.toLocaleString('es-MX')}
-                        <em>{subscription ? ' /mes' : (overnight ? ' /noche' : ' MXN')}</em>
+                        <em>
+                          {subscription ? ' /mes' : (overnight ? ' /noche' : ' MXN')}
+                        </em>
                       </span>
                     </label>
                   ))}
@@ -330,7 +395,7 @@ const Reservar = () => {
             )}
           </div>
 
- {/* MASCOTA */}
+          {/* MASCOTA */}
           <div className="form-section">
             <h3 className="form-section-title">🐾 Tu mascota</h3>
 
@@ -338,10 +403,8 @@ const Reservar = () => {
               <div className="form-group">
                 <label htmlFor="rs-pet">Usar mascota guardada</label>
                 <select
-                  id="rs-pet"
-                  name="mascotaId"
-                  value={form.mascotaId}
-                  onChange={handleField}
+                  id="rs-pet" name="mascotaId"
+                  value={form.mascotaId} onChange={handleField}
                 >
                   <option value="manual">— Cargar manualmente —</option>
                   {mascotas.map((m) => (
@@ -351,22 +414,23 @@ const Reservar = () => {
                   ))}
                 </select>
                 <p className="form-hint">
-                  ¿Falta alguna? <Link to="/mis-mascotas">Gestiona tus mascotas</Link>
+                  ¿Falta alguna?{' '}
+                  <Link to="/mis-mascotas">Gestiona tus mascotas</Link>
                 </p>
               </div>
             )}
 
-              <div className="form-row">
+            <div className="form-row">
               <div className="form-group">
                 <label>Nombre</label>
                 <input
-                  name="nombreMascota"
-                  value={form.nombreMascota}
-                  onChange={handleField}
-                  placeholder="Luna"
+                  name="nombreMascota" value={form.nombreMascota}
+                  onChange={handleField} placeholder="Luna"
                   className={errors.nombreMascota ? 'input-error' : ''}
                 />
-                {errors.nombreMascota && <span className="field-error">{errors.nombreMascota}</span>}
+                {errors.nombreMascota && (
+                  <span className="field-error">{errors.nombreMascota}</span>
+                )}
               </div>
               <div className="form-group">
                 <label>Especie</label>
@@ -381,10 +445,8 @@ const Reservar = () => {
               <div className="form-group">
                 <label>Raza</label>
                 <input
-                  name="raza"
-                  value={form.raza}
-                  onChange={handleField}
-                  placeholder="Golden Retriever"
+                  name="raza" value={form.raza}
+                  onChange={handleField} placeholder="Golden Retriever"
                   className={errors.raza ? 'input-error' : ''}
                 />
                 {errors.raza && <span className="field-error">{errors.raza}</span>}
@@ -392,37 +454,25 @@ const Reservar = () => {
               <div className="form-group">
                 <label>Peso (kg)</label>
                 <input
-                  name="peso"
-                  type="number"
-                  value={form.peso}
-                  onChange={handleField}
-                  placeholder="12"
-                  min="0"
-                  max="120"
+                  name="peso" type="number" value={form.peso}
+                  onChange={handleField} placeholder="12" min="0" max="120"
                 />
               </div>
-            </div>       
+            </div>
 
             <div className="form-row">
               <div className="form-group">
                 <label>Edad (años)</label>
                 <input
-                  name="edad"
-                  type="number"
-                  value={form.edad}
-                  onChange={handleField}
-                  placeholder="3"
-                  min="0"
-                  max="30"
+                  name="edad" type="number" value={form.edad}
+                  onChange={handleField} placeholder="3" min="0" max="30"
                 />
               </div>
               <div className="form-group">
                 <label>Alergias / medicación</label>
                 <input
-                  name="alergias"
-                  value={form.alergias}
-                  onChange={handleField}
-                  placeholder="Pollo, antibiótico X..."
+                  name="alergias" value={form.alergias}
+                  onChange={handleField} placeholder="Pollo, antibiótico X..."
                 />
               </div>
             </div>
@@ -435,35 +485,31 @@ const Reservar = () => {
               <div className="form-group">
                 <label>Nombre completo</label>
                 <input
-                  name="nombreDueno"
-                  value={form.nombreDueno}
-                  onChange={handleField}
-                  placeholder="María García"
+                  name="nombreDueno" value={form.nombreDueno}
+                  onChange={handleField} placeholder="María García"
                   className={errors.nombreDueno ? 'input-error' : ''}
                 />
-                {errors.nombreDueno && <span className="field-error">{errors.nombreDueno}</span>}
+                {errors.nombreDueno && (
+                  <span className="field-error">{errors.nombreDueno}</span>
+                )}
               </div>
               <div className="form-group">
                 <label>Teléfono</label>
                 <input
-                  name="telefono"
-                  type="tel"
-                  value={form.telefono}
-                  onChange={handleField}
-                  placeholder="+52 55 0000 0000"
+                  name="telefono" type="tel" value={form.telefono}
+                  onChange={handleField} placeholder="+52 55 0000 0000"
                   className={errors.telefono ? 'input-error' : ''}
                 />
-                {errors.telefono && <span className="field-error">{errors.telefono}</span>}
+                {errors.telefono && (
+                  <span className="field-error">{errors.telefono}</span>
+                )}
               </div>
             </div>
             <div className="form-group">
               <label>Email</label>
               <input
-                name="email"
-                type="email"
-                value={form.email}
-                onChange={handleField}
-                placeholder="tu@email.com"
+                name="email" type="email" value={form.email}
+                onChange={handleField} placeholder="tu@email.com"
                 className={errors.email ? 'input-error' : ''}
               />
               {errors.email && <span className="field-error">{errors.email}</span>}
@@ -472,8 +518,7 @@ const Reservar = () => {
               <div className="form-group">
                 <label>Dirección de recolección</label>
                 <input
-                  name="direccion"
-                  value={form.direccion}
+                  name="direccion" value={form.direccion}
                   onChange={handleField}
                   placeholder="Calle, número, colonia, alcaldía"
                 />
@@ -484,32 +529,32 @@ const Reservar = () => {
           {/* FECHA */}
           {!subscription && (
             <div className="form-section">
-              <h3 className="form-section-title">📅 {overnight ? 'Fechas de estancia' : 'Día y hora'}</h3>
+              <h3 className="form-section-title">
+                📅 {overnight ? 'Fechas de estancia' : 'Día y hora'}
+              </h3>
               <div className="form-row">
                 <div className="form-group">
                   <label>{overnight ? 'Check-in' : 'Fecha'}</label>
                   <input
-                    name="fecha"
-                    type="date"
-                    value={form.fecha}
-                    onChange={handleField}
-                    min={today}
+                    name="fecha" type="date" value={form.fecha}
+                    onChange={handleField} min={today}
                     className={errors.fecha ? 'input-error' : ''}
                   />
-                  {errors.fecha && <span className="field-error">{errors.fecha}</span>}
+                  {errors.fecha && (
+                    <span className="field-error">{errors.fecha}</span>
+                  )}
                 </div>
                 {overnight ? (
                   <div className="form-group">
                     <label>Check-out</label>
                     <input
-                      name="fechaFin"
-                      type="date"
-                      value={form.fechaFin}
-                      onChange={handleField}
-                      min={form.fecha || today}
+                      name="fechaFin" type="date" value={form.fechaFin}
+                      onChange={handleField} min={form.fecha || today}
                       className={errors.fechaFin ? 'input-error' : ''}
                     />
-                    {errors.fechaFin && <span className="field-error">{errors.fechaFin}</span>}
+                    {errors.fechaFin && (
+                      <span className="field-error">{errors.fechaFin}</span>
+                    )}
                   </div>
                 ) : (
                   form.fecha && (
@@ -517,13 +562,22 @@ const Reservar = () => {
                       <label>Horario</label>
                       <div className="horarios-grid">
                         {HORARIOS.map((h) => (
-                          <label key={h} className={`horario-btn ${form.hora === h ? 'selected' : ''}`}>
-                            <input type="radio" name="hora" value={h} checked={form.hora === h} onChange={handleField} hidden />
+                          <label
+                            key={h}
+                            className={`horario-btn ${form.hora === h ? 'selected' : ''}`}
+                          >
+                            <input
+                              type="radio" name="hora" value={h}
+                              checked={form.hora === h} onChange={handleField}
+                              hidden
+                            />
                             {h}
                           </label>
                         ))}
                       </div>
-                      {errors.hora && <span className="field-error">{errors.hora}</span>}
+                      {errors.hora && (
+                        <span className="field-error">{errors.hora}</span>
+                      )}
                     </div>
                   )
                 )}
@@ -536,17 +590,23 @@ const Reservar = () => {
             <h3 className="form-section-title">📝 Notas adicionales</h3>
             <div className="form-group">
               <textarea
-                name="notas"
-                value={form.notas}
-                onChange={handleField}
+                name="notas" value={form.notas} onChange={handleField}
                 placeholder="Comportamiento especial, miedos, indicaciones del veterinario..."
                 rows={3}
               />
             </div>
           </div>
 
-          <button type="submit" className="btn-primary reservar-submit" disabled={loading}>
-            {loading ? 'Procesando...' : (subscription ? 'Activar suscripción →' : 'Confirmar reserva →')}
+          <button
+            type="submit" className="btn-primary reservar-submit"
+            disabled={loading}
+          >
+            {loading
+              ? 'Procesando...'
+              : subscription
+                ? 'Activar suscripción →'
+                : 'Confirmar reserva →'
+            }
           </button>
         </form>
 
@@ -556,18 +616,46 @@ const Reservar = () => {
             <h4>Resumen</h4>
             {service ? (
               <>
-                <div className="resumen-line"><span>Servicio</span><strong>{service.nombre}</strong></div>
+                <div className="resumen-line">
+                  <span>Servicio</span>
+                  <strong>{service.nombre}</strong>
+                </div>
                 {option && (
                   <div className="resumen-line">
                     <span>Opción</span>
                     <strong>{option.label}</strong>
                   </div>
                 )}
-                {form.nombreMascota && <div className="resumen-line"><span>Mascota</span><strong>{form.nombreMascota}</strong></div>}
-                {form.fecha && <div className="resumen-line"><span>{overnight ? 'Check-in' : 'Fecha'}</span><strong>{form.fecha}</strong></div>}
-                {overnight && form.fechaFin && <div className="resumen-line"><span>Check-out</span><strong>{form.fechaFin}</strong></div>}
-                {!overnight && form.hora && <div className="resumen-line"><span>Hora</span><strong>{form.hora} hs</strong></div>}
-                {overnight && noches > 0 && <div className="resumen-line"><span>Noches</span><strong>{noches}</strong></div>}
+                {form.nombreMascota && (
+                  <div className="resumen-line">
+                    <span>Mascota</span>
+                    <strong>{form.nombreMascota}</strong>
+                  </div>
+                )}
+                {form.fecha && (
+                  <div className="resumen-line">
+                    <span>{overnight ? 'Check-in' : 'Fecha'}</span>
+                    <strong>{form.fecha}</strong>
+                  </div>
+                )}
+                {overnight && form.fechaFin && (
+                  <div className="resumen-line">
+                    <span>Check-out</span>
+                    <strong>{form.fechaFin}</strong>
+                  </div>
+                )}
+                {!overnight && form.hora && (
+                  <div className="resumen-line">
+                    <span>Hora</span>
+                    <strong>{form.hora} hs</strong>
+                  </div>
+                )}
+                {overnight && noches > 0 && (
+                  <div className="resumen-line">
+                    <span>Noches</span>
+                    <strong>{noches}</strong>
+                  </div>
+                )}
                 {option && (
                   <div className="resumen-total">
                     <span>Total</span>
@@ -576,13 +664,15 @@ const Reservar = () => {
                 )}
               </>
             ) : (
-              <p className="resumen-empty">Elige un servicio para ver el detalle.</p>
+              <p className="resumen-empty">
+                Elige un servicio para ver el detalle.
+              </p>
             )}
           </div>
 
           <div className="sidebar-card sidebar-info">
             <h4>📍 Visitanos</h4>
-            <p>Av. Ejemplo 123, Condesa, CDMX<br/>Lun – Sáb · 9:00 – 19:00</p>
+            <p>Av. Ejemplo 123, Condesa, CDMX<br />Lun – Sáb · 9:00 – 19:00</p>
             <p className="sidebar-phone">📞 +52 55 1234 5678</p>
           </div>
         </aside>

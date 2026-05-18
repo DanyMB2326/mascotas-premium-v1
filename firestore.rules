@@ -1,0 +1,325 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ══════════════════════════════════════════════════════════
+    //  HELPERS
+    // ══════════════════════════════════════════════════════════
+
+    /** Usuario autenticado */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** El UID del request coincide con el documento */
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    /**
+     * Lee el campo `role` del documento users/{uid} del usuario actual.
+     *
+     * ⚠️  COSTO: cada llamada a isAdmin() ejecuta 1 lectura a Firestore.
+     *    Si esto se vuelve un cuello de botella a escala, migra a
+     *    Firebase Custom Claims:
+     *      request.auth.token.role == 'admin'
+     *    y elimina la llamada a get() aquí.
+     */
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && getUserRole() == 'admin';
+    }
+
+    function isEmpleado() {
+      return isSignedIn() && getUserRole() == 'empleado';
+    }
+
+    function isAdminOrEmpleado() {
+      return isAdmin() || isEmpleado();
+    }
+
+    /** Valida que el campo requerido existe en el nuevo documento */
+    function hasField(field) {
+      return field in request.resource.data;
+    }
+
+    /** Previene que un cliente escale sus propios permisos */
+    function noRoleEscalation() {
+      return !('role' in request.resource.data)
+          || request.resource.data.role == resource.data.role;
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    //  COLECCIÓN: users/{uid}
+    //  Guarda mascotas, datos de perfil y el campo `role`.
+    //
+    //  Estructura esperada:
+    //    users/{uid} {
+    //      role: 'admin' | 'empleado' | 'cliente',
+    //      displayName, email, phone, pets: [...],
+    //      type: 'vip' | 'frecuente' | 'regular' | 'nuevo',
+    //      orders, totalSpent, lastVisit, joined, ...
+    //    }
+    // ══════════════════════════════════════════════════════════
+    match /users/{uid} {
+
+      // Propietario: puede leer y escribir su propio documento,
+      // pero NO puede cambiar su propio rol.
+      allow read:  if isOwner(uid);
+      allow write: if isOwner(uid) && noRoleEscalation();
+
+      // Admin: acceso total (necesario para el panel de Clientes y Personal).
+      allow read, write: if isAdmin();
+
+      // Empleado: puede leer documentos de clientes (sin poder modificarlos).
+      allow read: if isEmpleado();
+
+      // ── Subcolección: users/{uid}/profile/{doc} ──────────────
+      // Guarda Mi información, direcciones, métodos de pago.
+      match /profile/{doc} {
+        allow read, write: if isOwner(uid);
+        allow read, write: if isAdmin();
+      }
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    //  COLECCIÓN: reservas/{reservaId}
+    //  Citas y reservas de servicios (Baño, Hotel, Consulta…).
+    //  —— COLECCIÓN EXISTENTE (sin cambios en lógica) ——
+    //
+    //  Estructura esperada:
+    //    reservas/{id} {
+    //      userId, serviceId, date, time, petName,
+    //      status: 'pendiente'|'en_proceso'|'completado'|'cancelado',
+    //      notes, createdAt
+    //    }
+    // ══════════════════════════════════════════════════════════
+    match /reservas/{reservaId} {
+
+      // Cliente: crea solo sus propias reservas.
+      allow create: if isSignedIn()
+                    && request.resource.data.userId == request.auth.uid;
+
+      // Cliente: lee/actualiza/cancela solo sus propias reservas.
+      allow read, update, delete: if isSignedIn()
+                                  && resource.data.userId == request.auth.uid;
+
+      // Admin y empleados: acceso completo (panel de Pedidos).
+      allow read, write: if isAdminOrEmpleado();
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    //  COLECCIÓN: pedidos/{pedidoId}
+    //  Compras de la tienda online (productos físicos).
+    //  —— COLECCIÓN EXISTENTE (sin cambios en lógica) ——
+    //
+    //  Estructura esperada:
+    //    pedidos/{id} {
+    //      userId, items: [...], total, status,
+    //      shippingAddress, paymentMethod, createdAt
+    //    }
+    // ══════════════════════════════════════════════════════════
+    match /pedidos/{pedidoId} {
+
+      // Cliente: crea solo sus propios pedidos.
+      allow create: if isSignedIn()
+                    && request.resource.data.userId == request.auth.uid;
+
+      // Cliente: lee/actualiza/cancela solo sus propios pedidos.
+      allow read, update, delete: if isSignedIn()
+                                  && resource.data.userId == request.auth.uid;
+
+      // Admin y empleados: acceso completo (panel de Pedidos).
+      allow read, write: if isAdminOrEmpleado();
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    //  COLECCIÓN: orders/{orderId}      ← NUEVA (Dashboard Admin)
+    //  Órdenes consolidadas del panel administrativo.
+    //  Combina reservas de servicio + pedidos de tienda en una
+    //  vista unificada para el administrador.
+    //
+    //  Estructura esperada:
+    //    orders/{id} {
+    //      clientName, clientId, service, pets,
+    //      total, status, createdAt, updatedAt, notes
+    //    }
+    // ══════════════════════════════════════════════════════════
+    match /orders/{orderId} {
+
+      // Admin: acceso total (crear, leer, actualizar, cambiar estado).
+      allow read, write: if isAdmin();
+
+      // Empleado: puede leer y actualizar estado, no eliminar.
+      allow read:   if isEmpleado();
+      allow update: if isEmpleado()
+                    && request.resource.data.keys().hasOnly(
+                         ['status', 'updatedAt', 'notes']
+                       );
+
+      // Cliente: puede leer sus propias órdenes (para seguimiento).
+      allow read: if isSignedIn()
+                  && resource.data.clientId == request.auth.uid;
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    //  COLECCIÓN: transactions/{txnId}  ← NUEVA (Dashboard Admin)
+    //  Registro financiero: ingresos y egresos.
+    //  Acceso exclusivo para administrador.
+    //
+    //  Estructura esperada:
+    //    transactions/{id} {
+    //      type: 'ingreso' | 'egreso',
+    //      concept, amount, category, method,
+    //      date, createdAt, createdBy
+    //    }
+    // ══════════════════════════════════════════════════════════
+    match /transactions/{txnId} {
+      allow read, write: if isAdmin();
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    //  COLECCIÓN: inventory/{productId}  ← NUEVA (Dashboard Admin)
+    //  Control de inventario de productos y medicamentos.
+    //
+    //  Estructura esperada:
+    //    inventory/{id} {
+    //      name, sku, category, stock, minStock,
+    //      price, supplier, updatedAt
+    //    }
+    // ══════════════════════════════════════════════════════════
+    match /inventory/{productId} {
+
+      // Admin: acceso total.
+      allow read, write: if isAdmin();
+
+      // Empleado: puede leer el inventario y ajustar stock,
+      // pero no agregar ni eliminar productos.
+      allow read:   if isEmpleado();
+      allow update: if isEmpleado()
+                    && request.resource.data.keys().hasOnly(
+                         ['stock', 'updatedAt']
+                       );
+
+      // Lectura pública de nombre y precio (para la tienda).
+      // Omite datos sensibles como proveedor y costo.
+      allow read: if true
+                  && !('supplier' in resource.data)
+                  || resource.data.keys().hasAny(['name', 'price', 'stock']);
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    //  COLECCIÓN: staff/{employeeId}    ← NUEVA (Dashboard Admin)
+    //  Registro de empleados, horarios, nómina, desempeño.
+    //  Acceso controlado: admin total, empleado solo su propio doc.
+    //
+    //  Estructura esperada:
+    //    staff/{id} {
+    //      name, role, email, phone, salary, schedule,
+    //      status, startDate, performance, userId
+    //    }
+    // ══════════════════════════════════════════════════════════
+    match /staff/{employeeId} {
+
+      // Admin: acceso total.
+      allow read, write: if isAdmin();
+
+      // Empleado: solo puede leer su propio registro.
+      // (el campo userId en staff apunta al uid de Firebase Auth)
+      allow read: if isEmpleado()
+                  && resource.data.userId == request.auth.uid;
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    //  COLECCIÓN: audit_log/{logId}     ← NUEVA (Dashboard Admin)
+    //  Registro de auditoría de acciones administrativas.
+    //  Solo escritura del sistema (reglas de backend/Cloud Functions),
+    //  solo lectura del admin.
+    //
+    //  Estructura esperada:
+    //    audit_log/{id} {
+    //      action, userId, userRole, targetCollection,
+    //      targetId, before, after, timestamp, ip
+    //    }
+    // ══════════════════════════════════════════════════════════
+    match /audit_log/{logId} {
+
+      // Admin: solo lectura (no puede modificar el historial).
+      allow read:  if isAdmin();
+
+      // Escritura solo desde Cloud Functions con privilegios de admin.
+      // En cliente: denegado.
+      allow write: if false;
+    }
+
+
+    // ══════════════════════════════════════════════════════════
+    //  COLECCIÓN: services/{serviceId}  ← NUEVA (opcional)
+    //  Catálogo de servicios (Baño, Consulta, Hotel…).
+    //  Lectura pública para la tienda, escritura solo admin.
+    // ══════════════════════════════════════════════════════════
+    match /services/{serviceId} {
+      allow read:  if true;
+      allow write: if isAdmin();
+    }
+    
+    // ══════════════════════════════════════════════════════════
+		//  COLECCIÓN: products
+		//  Catálogo de productos de la tienda.
+		// ══════════════════════════════════════════════════════════
+		match /products/{productId} {
+  			// Lectura pública (la tienda la necesita sin login)
+  		allow read: if true;
+	
+  			// Solo admin puede modificar stock y productos
+  		allow write: if isAdmin();
+		}
+
+		// ── citas ──────────────────────────────────────────────
+    match /citas/{citaId} {
+      allow create: if isSignedIn()
+                    && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isSignedIn()
+                                   && resource.data.userId == request.auth.uid;
+      allow read, write: if isAdminOrEmpleado();
+    }
+
+    // ── bookings ───────────────────────────────────────────
+    match /bookings/{bookingId} {
+      allow create: if isSignedIn()
+                    && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isSignedIn()
+                                   && resource.data.userId == request.auth.uid;
+      allow read, write: if isAdminOrEmpleado();
+    }
+
+    // ── estancias ──────────────────────────────────────────
+    match /estancias/{estanciaId} {
+      allow create: if isSignedIn()
+                    && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isSignedIn()
+                                   && resource.data.userId == request.auth.uid;
+      allow read, write: if isAdminOrEmpleado();
+    }
+
+    // ══════════════════════════════════════════════════════════
+    //  CATCH-ALL: bloquear todo lo no declarado arriba.
+    //  Regla de seguridad por defecto: deny.
+    // ══════════════════════════════════════════════════════════
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+  }
+}
